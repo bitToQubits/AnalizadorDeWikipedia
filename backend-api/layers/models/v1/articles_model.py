@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from layers.models.v1.db_handler import SessionDep
-from sqlmodel import Field, SQLModel, col, delete, select
+from sqlmodel import Field, Relationship, SQLModel, col, delete, select
 
 # Definicion de entidades
 
@@ -16,6 +16,9 @@ class ArticlesCreate(ArticlesBase):
 
 class Articles(ArticlesBase, table=True):
     id: int = Field(default=None, primary_key=True)
+    dictionary_of_words_item: list["Articles_Dictionary"] = Relationship(back_populates="article")
+    entities_item: list["Articles_Entities"] = Relationship(back_populates="article")
+    types_words_item: list["Articles_Types_Words"] = Relationship(back_populates="article")
 
 class ArticlesPublic(ArticlesBase):
     id: int
@@ -29,28 +32,31 @@ class ArticlesUpdate(SQLModel):
     note: str | None = None
 
 class ArticlesDictionaryBase(SQLModel):
-    id_article: int
+    id_article: int = Field(foreign_key="articles.id", index=True)
     name: str
     counter: int
 
 class Articles_Dictionary(ArticlesDictionaryBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    article: Articles = Relationship(back_populates="dictionary_of_words_item")
 
 class ArticlesTypesWordsBase(SQLModel):
-    id_article: int
+    id_article: int = Field(foreign_key="articles.id", index=True)
     word: str
     type_word: str
 
-class Article_Types_Words(ArticlesTypesWordsBase, table=True):
+class Articles_Types_Words(ArticlesTypesWordsBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    article: Articles = Relationship(back_populates="types_words_item")
 
 class ArticlesEntitiesBase(SQLModel):
-    id_article: int
+    id_article: int = Field(foreign_key="articles.id", index=True)
     word: str
     entity: str
 
 class Articles_Entities(ArticlesEntitiesBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    article: Articles = Relationship(back_populates="entities_item")
 
 # Definicion del modelo principal
 class ArticlesModel():
@@ -58,8 +64,8 @@ class ArticlesModel():
         db_entities = Articles_Entities.model_validate(entities_object)
         session.add(db_entities)
     
-    def save_article_types_words(self, types_words_object: ArticlesTypesWordsBase, session: SessionDep):
-        db_types_words = Article_Types_Words.model_validate(types_words_object)
+    def save_articles_types_words(self, types_words_object: ArticlesTypesWordsBase, session: SessionDep):
+        db_types_words = Articles_Types_Words.model_validate(types_words_object)
         session.add(db_types_words)
     
     def save_article_dictionary(self, articles_dictionary_object: ArticlesDictionaryBase, session: SessionDep):
@@ -67,22 +73,28 @@ class ArticlesModel():
         session.add(db_dictionary)
 
     def save_article(self, article_object: ArticlesCreate, session: SessionDep):
+        dictionary_of_words = article_object.dictionary_of_words.items()
+        type_of_words = article_object.type_of_words
+        entities = article_object.entities
+
         db_article = Articles.model_validate(article_object)
         session.add(db_article)
         session.commit()
         session.refresh(db_article)
         article_id = db_article.id
 
-        for name, count in article_object.dictionary_of_words.items():
+        for name, count in dictionary_of_words:
+            print(name, count, article_id)
             dictionary_object = ArticlesDictionaryBase(id_article=article_id, name=name, counter=count)
+            print(dictionary_object)
             self.save_article_dictionary(dictionary_object, session)
 
-        for type_word_array in article_object.type_of_words:
+        for type_word_array in type_of_words:
             type_word_object = \
             ArticlesTypesWordsBase(id_article=article_id, word=type_word_array[0], type_word=type_word_array[1])
-            self.save_article_types_words(type_word_object, session)
+            self.save_articles_types_words(type_word_object, session)
 
-        for entity in article_object.entities:
+        for entity in entities:
             entity_object = ArticlesEntitiesBase(id_article=article_id, word=entity[0], entity=entity[1])
             self.save_article_entities(entity_object, session)
 
@@ -102,8 +114,10 @@ class ArticlesModel():
         dictionary = delete(Articles_Dictionary).where(col(Articles_Dictionary.id_article) == article_id)
         session.exec(dictionary) # type: ignore
 
-        type_word = delete(Article_Types_Words).where(col(Article_Types_Words.id_article) == article_id)
+        type_word = delete(Articles_Types_Words).where(col(Articles_Types_Words.id_article) == article_id)
         session.exec(type_word) # type: ignore
+
+        session.delete(article)
 
         session.commit()
 
@@ -113,55 +127,36 @@ class ArticlesModel():
         if not article:
             raise HTTPException(status_code=404, detail="Artículo no encontrado")
 
-        entities = select(
-            Articles_Entities.word,
-            Articles_Entities.entity
-        ).where(col(Articles_Entities.id_article) == article_id)
-        entities = session.exec(entities)
-
-        dictionary = select(
-            Articles_Dictionary.name,
-            Articles_Dictionary.counter
-        ).where(col(Articles_Dictionary.id_article) == article_id)
-        dictionary = session.exec(dictionary)
-
-        type_word = select(
-            Article_Types_Words.word,
-            Article_Types_Words.type_word
-        ).where(col(Article_Types_Words.id_article) == article_id)
-        type_word = session.exec(type_word)
-
         session.commit()
 
         article_object = {
             "id": article.id,
             "article_name": article.article_name,
             "article_summary": article.article_summary,
-            "dictionary_of_words": dictionary,
-            "type_word": type_word,
-            "entities": entities
+            "dictionary_of_words": article.dictionary_of_words_item,
+            "type_word": article.types_words_item,
+            "entities": article.entities_item
         }
 
         return article_object
     
     def get_multiple_articles(self, offset: int, session: SessionDep):
-        # articles_list_not_processed = select(
-        #     Articles,
-        #     Articles_Dictionary,
-        #     Article_Types_Words,
-        #     Articles_Entities
-        # ).where(
-        #     Articles.id == 
-        #     Article_Types_Words.id_article == 
-        #     Articles_Entities.id_article == 
-        #     Articles_Dictionary.id_article
-        # )
+        articles_list_not_processed = select(
+            Articles.id,
+            Articles.article_name,
+            Articles.article_summary
+        ).offset(offset).limit(10)
         articles_list_not_processed = session.exec(articles_list_not_processed)
 
-        for articles, dictionary, types_words, entities in articles_list_not_processed:
-            print(articles, dictionary, types_words, entities)
-            break
+        articles_list_processed = []
 
-        return []
+        for article_id, article_name, article_summary in articles_list_not_processed:
+            articles_list_processed.append({
+                "id": article_id,
+                "article_name":article_name,
+                "article_summary": article_summary
+            })
+
+        return articles_list_processed
 
 articles_model = ArticlesModel()

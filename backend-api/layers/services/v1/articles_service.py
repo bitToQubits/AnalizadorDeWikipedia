@@ -116,6 +116,6 @@ class ArticlesService:
     def get_multiple_articles(self, offset:int, session: SessionDep):
         articles_list = articles_model.get_multiple_articles(offset, session)
 
-        return []
+        return articles_list
 
 articles_service = ArticlesService()
