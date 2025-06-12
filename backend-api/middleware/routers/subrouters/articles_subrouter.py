@@ -1,5 +1,5 @@
 import importlib
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter
 from layers.controllers.v1.articles_controller import articles_controller
 from layers.models.v1.db_handler import SessionDep
 from layers.models.v1.articles_model import ArticlesCreate
@@ -22,5 +22,13 @@ async def save_article(article_object: ArticlesCreate, session: SessionDep):
     return articles_controller.save_article(article_object, session)
 
 @router.delete('/{article_id}')
-async def save_article(article_id: int, session: SessionDep):
+async def delete_article(article_id: int, session: SessionDep):
     return articles_controller.delete_article(article_id, session)
+
+@router.get('/list')
+async def get_multiple_articles(offset: int, session: SessionDep):
+    return articles_controller.get_multiple_articles(offset, session)
+
+@router.get('/{article_id}')
+async def get_article(article_id: int, session: SessionDep):
+    return articles_controller.get_article(article_id, session)

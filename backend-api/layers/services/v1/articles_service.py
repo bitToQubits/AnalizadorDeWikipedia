@@ -3,7 +3,7 @@ from layers.models.v1.db_handler import SessionDep
 from utils.config import settings
 import wikipedia
 import spacy
-from layers.models.v1.articles_model import ArticlesCreate, articles_model
+from layers.models.v1.articles_model import ArticlesCreate, articles_model, ArticlesPublic
 
 class ArticlesService:
     def search_wikipedia(self, search_term: str):
@@ -84,9 +84,38 @@ class ArticlesService:
         }
     
     def save_article(self, article_object: ArticlesCreate, session: SessionDep):
-        articles_model.save_article(article_object, session)
+        return articles_model.save_article(article_object, session)
 
     def delete_article(self, article_id: int, session: SessionDep):
         articles_model.delete_article(article_id, session)
+
+    def get_article(self, article_id: int, session: SessionDep):
+        article_not_processed = articles_model.get_article(article_id, session)
+        dictionary_of_words = {}
+        types_word_array = []
+        entities_array = []
+
+        for dictionary in article_not_processed["dictionary_of_words"]:
+            dictionary_of_words[dictionary.name] = dictionary.counter
+
+        for type_word in article_not_processed["type_word"]:
+            types_word_array.append([type_word.word, type_word.type_word])
+
+        for entity in article_not_processed["entities"]:
+            entities_array.append([entity.word, entity.entity])
+        
+        return ArticlesPublic(
+            id=article_not_processed["id"], 
+            article_name=article_not_processed["article_name"],
+            article_summary=article_not_processed["article_summary"],
+            dictionary_of_words=dictionary_of_words,
+            entities=entities_array,
+            type_of_words=types_word_array
+        )
+    
+    def get_multiple_articles(self, offset:int, session: SessionDep):
+        articles_list = articles_model.get_multiple_articles(offset, session)
+
+        return []
 
 articles_service = ArticlesService()

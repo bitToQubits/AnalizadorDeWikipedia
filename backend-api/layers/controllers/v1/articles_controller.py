@@ -1,5 +1,6 @@
-from fastapi import Response
+from fastapi import HTTPException, Response
 import json
+
 from layers.models.v1.db_handler import SessionDep
 from layers.models.v1.articles_model import ArticlesCreate
 from layers.services.v1.articles_service import articles_service
@@ -19,22 +20,42 @@ class ArticlesController():
         wikipedia_identificator = wikipedia_identificator.strip()
 
         if(wikipedia_identificator == ""):
-            return Response(content=json.dumps({'message': "Debes proporcionar un identificador del artículo."}), status_code=422)
+            raise HTTPException(status_code=422, detail="Debes proporcionar un identificador para el artículo de Wikipedia")
         
         results_analysis = articles_service.analyze_wikipedia_article(wikipedia_identificator)
 
         return Response(content=json.dumps(results_analysis), status_code=200)
     
     def save_article(self, article_object: ArticlesCreate, session: SessionDep):
-        articles_service.save_article(article_object, session)
+        articulo_id = articles_service.save_article(article_object, session)
 
-        return Response(content=json.dumps({'message': "Artículo guardado exitosamente."}), status_code=201)
+        return Response(
+            content=json.dumps(
+                {
+                    'message': "Artículo guardado exitosamente.", 
+                    'articulo_id': articulo_id
+                }
+            ), 
+            status_code=201
+        )
     
     def delete_article(self, article_id: int, session: SessionDep):
         articles_service.delete_article(article_id, session)
         
         return Response(content=json.dumps({'message': "Artículo eliminado exitosamente."}), status_code=200)
+    
+    def get_article(self, article_id: int, session: SessionDep):
+        article = articles_service.get_article(article_id, session)
 
+        return article
+    
+    def get_multiple_articles(self, offset: int, session: SessionDep):
+        
+        if(offset < 0):
+            raise HTTPException(status_code=422, detail="Debes proporcionar un offset valido para esta consulta.")
 
+        articles_list = articles_service.get_multiple_articles(offset, session)
+
+        return articles_list
 
 articles_controller = ArticlesController()

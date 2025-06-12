@@ -9,7 +9,7 @@ from contextlib import asynccontextmanager
 import json
 
 async def not_found(request, exc):
-    return Response(content=json.dumps({'message': "Endpoint no definido."}), status_code=404)
+    return Response(content=json.dumps({'message': exc.detail}), status_code=404)
 
 exceptions = {
     404: not_found
