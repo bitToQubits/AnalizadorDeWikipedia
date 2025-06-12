@@ -1,11 +1,18 @@
+import os
+from dotenv import load_dotenv
+from sqlalchemy import URL
+
+load_dotenv()
+
 class Settings():
     API_V1_STR: str = "/api/v1"
-    POSTGRES_SERVER: str
-    POSTGRES_PORT: int = 5432
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str = ""
-    POSTGRES_DB: str = ""
-    OPENAI_API_KEY: str = ""
+    POSTGRES_URL: str = "postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}".format(
+        user=os.getenv("POSTGRES_USER"),
+        password=os.getenv("POSTGRES_PASSWORD"),
+        host=os.getenv("POSTGRES_SERVER"),
+        port=os.getenv("POSTGRES_PORT"),
+        database=os.getenv("POSTGRES_DB")
+    )
     WIKIPEDIA_API_URL: str = "https://en.wikipedia.org/w/api.php"
     STOP_WORDS: set = set([
         "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at",
@@ -30,4 +37,4 @@ class Settings():
         "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves"
     ])
 
-settings = Settings()  # type: ignore
+settings = Settings()

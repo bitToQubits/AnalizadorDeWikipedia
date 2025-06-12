@@ -1,6 +1,8 @@
 import importlib
 from fastapi import APIRouter, Depends, HTTPException
 from layers.controllers.v1.articles_controller import articles_controller
+from layers.models.v1.db_handler import SessionDep
+from layers.models.v1.articles_model import ArticlesCreate
 
 router = APIRouter(
     prefix="/articles",
@@ -14,3 +16,11 @@ async def search_wikipedia(search_term: str):
 @router.get('/analyze/{wikipedia_identificator}')
 async def analyze_wikipedia_article(wikipedia_identificator: str):
     return articles_controller.analyze_wikipedia_article(wikipedia_identificator)
+
+@router.post('/')
+async def save_article(article_object: ArticlesCreate, session: SessionDep):
+    return articles_controller.save_article(article_object, session)
+
+@router.delete('/{article_id}')
+async def save_article(article_id: int, session: SessionDep):
+    return articles_controller.delete_article(article_id, session)

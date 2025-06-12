@@ -1,7 +1,9 @@
 import requests
+from layers.models.v1.db_handler import SessionDep
 from utils.config import settings
 import wikipedia
 import spacy
+from layers.models.v1.articles_model import ArticlesCreate, articles_model
 
 class ArticlesService:
     def search_wikipedia(self, search_term: str):
@@ -80,6 +82,11 @@ class ArticlesService:
             "entities" : entities,
             "type_of_words": type_of_words
         }
+    
+    def save_article(self, article_object: ArticlesCreate, session: SessionDep):
+        articles_model.save_article(article_object, session)
 
+    def delete_article(self, article_id: int, session: SessionDep):
+        articles_model.delete_article(article_id, session)
 
 articles_service = ArticlesService()
