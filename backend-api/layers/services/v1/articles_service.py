@@ -1,5 +1,6 @@
 import requests
 from layers.models.v1.db_handler import SessionDep
+from utils.data_models import data_models
 from utils.config import settings
 import wikipedia
 from layers.models.v1.articles_model import ArticlesCreate, ArticlesUpdate, articles_model, ArticlesPublic
@@ -94,13 +95,13 @@ class ArticlesService:
         types_word_array = []
         entities_array = []
 
-        for dictionary in article_not_processed["dictionary_of_words"]:
+        for dictionary in article_not_processed[data_models.article_model["dictionary"]]:
             dictionary_of_words[dictionary.name] = dictionary.counter
 
-        for type_word in article_not_processed["type_word"]:
+        for type_word in article_not_processed[data_models.article_model["type_words"]]:
             types_word_array.append([type_word.word, type_word.type_word])
 
-        for entity in article_not_processed["entities"]:
+        for entity in article_not_processed[data_models.article_model["entities"]]:
             entities_array.append([entity.word, entity.entity])
         
         return ArticlesPublic(

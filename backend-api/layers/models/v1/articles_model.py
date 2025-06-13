@@ -4,6 +4,7 @@ from sqlmodel import Field, Relationship, SQLModel, col, delete, select
 from datetime import datetime
 from utils.data_models import data_models
 # Definicion de entidades
+from utils.response_messages import responses
 
 class ArticlesBase(SQLModel):
     article_name: str 
@@ -105,7 +106,7 @@ class ArticlesModel():
         article = session.get(Articles, article_id)
 
         if not article:
-            raise HTTPException(status_code=404, detail="Artículo para eliminar no encontrado")
+            raise HTTPException(status_code=404, detail=responses.error["ARTICLE_TO_REMOVE_NOT_FOUND"])
 
         # nota: ignore el error de tipado aqui porque es un error
         # actual de sqlmodel, chequea: https://github.com/fastapi/sqlmodel/issues/909
@@ -127,7 +128,7 @@ class ArticlesModel():
         article = session.get(Articles, article_id)
 
         if not article:
-            raise HTTPException(status_code=404, detail="Artículo no encontrado")
+            raise HTTPException(status_code=404, detail=responses.error["ARTICLE_NOT_FOUND"])
 
         session.commit()
 
@@ -168,7 +169,7 @@ class ArticlesModel():
         db_article = session.get(Articles, article_id)
 
         if not db_article:
-            raise HTTPException(status_code=404, detail="Artículo para actualizar no encontrado")
+            raise HTTPException(status_code=404, detail=responses.error["ARTICLE_TO_UPDATE_NOT_FOUND"])
         
         article_data = article_object.model_dump(exclude_unset=True)
         db_article.sqlmodel_update(article_data)
