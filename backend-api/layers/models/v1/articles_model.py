@@ -9,16 +9,15 @@ class ArticlesBase(SQLModel):
     article_summary: str
     note: str | None = None
 
-class ArticlesCreate(ArticlesBase):
-    dictionary_of_words: dict
-    entities: list
-    type_of_words: list
-
 class Articles(ArticlesBase, table=True):
     id: int = Field(default=None, primary_key=True)
     dictionary_of_words_item: list["Articles_Dictionary"] = Relationship(back_populates="article")
     entities_item: list["Articles_Entities"] = Relationship(back_populates="article")
     types_words_item: list["Articles_Types_Words"] = Relationship(back_populates="article")
+class ArticlesCreate(ArticlesBase):
+    dictionary_of_words: dict
+    entities: list
+    type_of_words: list
 
 class ArticlesPublic(ArticlesBase):
     id: int
@@ -27,8 +26,6 @@ class ArticlesPublic(ArticlesBase):
     type_of_words: list
 
 class ArticlesUpdate(SQLModel):
-    article_name: str | None = None
-    article_summary: str | None = None
     note: str | None = None
 
 class ArticlesDictionaryBase(SQLModel):
@@ -84,9 +81,7 @@ class ArticlesModel():
         article_id = db_article.id
 
         for name, count in dictionary_of_words:
-            print(name, count, article_id)
             dictionary_object = ArticlesDictionaryBase(id_article=article_id, name=name, counter=count)
-            print(dictionary_object)
             self.save_article_dictionary(dictionary_object, session)
 
         for type_word_array in type_of_words:
@@ -158,5 +153,16 @@ class ArticlesModel():
             })
 
         return articles_list_processed
+    
+    def update_article(self, article_object: ArticlesUpdate, article_id: int, session: SessionDep):
+        db_article = session.get(Articles, article_id)
+
+        if not db_article:
+            raise HTTPException(status_code=404, detail="Artículo no encontrado")
+        
+        article_data = article_object.model_dump(exclude_unset=True)
+        db_article.sqlmodel_update(article_data)
+        session.add(db_article)
+        session.commit()
 
 articles_model = ArticlesModel()

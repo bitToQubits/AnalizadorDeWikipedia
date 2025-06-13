@@ -2,7 +2,7 @@ import importlib
 from fastapi import APIRouter
 from layers.controllers.v1.articles_controller import articles_controller
 from layers.models.v1.db_handler import SessionDep
-from layers.models.v1.articles_model import ArticlesCreate
+from layers.models.v1.articles_model import ArticlesCreate, ArticlesUpdate
 
 router = APIRouter(
     prefix="/articles",
@@ -32,3 +32,7 @@ async def get_multiple_articles(offset: int, session: SessionDep):
 @router.get('/{article_id}')
 async def get_article(article_id: int, session: SessionDep):
     return articles_controller.get_article(article_id, session)
+
+@router.patch('/{article_id}')
+async def update_article(article_object: ArticlesUpdate, article_id: int, session: SessionDep):
+    return articles_controller.update_article(article_object, article_id, session)

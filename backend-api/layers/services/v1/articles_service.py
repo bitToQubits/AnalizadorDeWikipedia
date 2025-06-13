@@ -3,7 +3,7 @@ from layers.models.v1.db_handler import SessionDep
 from utils.config import settings
 import wikipedia
 import spacy
-from layers.models.v1.articles_model import ArticlesCreate, articles_model, ArticlesPublic
+from layers.models.v1.articles_model import ArticlesCreate, ArticlesUpdate, articles_model, ArticlesPublic
 
 class ArticlesService:
     def search_wikipedia(self, search_term: str):
@@ -48,8 +48,8 @@ class ArticlesService:
         array_of_words = article_page.content.split()
 
         for word in array_of_words:
-            if(word not in settings.STOP_WORDS):
-                if(dictionary_of_words.get(word) is None):
+            if word not in settings.STOP_WORDS:
+                if dictionary_of_words.get(word) is None:
                     dictionary_of_words[word] = 1
                 else:
                     dictionary_of_words[word] += 1
@@ -58,7 +58,7 @@ class ArticlesService:
         dictionary_of_words = \
         {k: v for k, v in sorted(dictionary_of_words.items(), key=lambda item: item[1], reverse=True)}
 
-        if(len(dictionary_of_words) >= 50):
+        if len(dictionary_of_words) >= 50:
             dictionary_of_words = dict(list(dictionary_of_words.items())[:50])
 
         # Reconocimiento de entidades
@@ -66,13 +66,13 @@ class ArticlesService:
         text_processed_for_entities = model_for_recognizing_entities(article_page.content)
 
         for index, entity in enumerate(text_processed_for_entities.ents):
-            if(index == 50):
+            if index == 50:
                 break
             entities.append((entity.text, entity.label_))
 
         # Identificando que tipo de palabra es cada una
         for index, type_word in enumerate(text_processed_for_entities):
-            if(index == 50):
+            if index == 50:
                 break
             type_of_words.append((type_word.text, type_word.pos_))
         
@@ -117,5 +117,8 @@ class ArticlesService:
         articles_list = articles_model.get_multiple_articles(offset, session)
 
         return articles_list
+    
+    def update_article(self, article_object: ArticlesUpdate, article_id: int, session: SessionDep):
+        articles_model.update_article(article_object,article_id, session)
 
 articles_service = ArticlesService()
