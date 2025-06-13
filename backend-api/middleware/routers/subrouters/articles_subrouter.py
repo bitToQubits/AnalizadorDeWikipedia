@@ -1,4 +1,3 @@
-import importlib
 from fastapi import APIRouter
 from layers.controllers.v1.articles_controller import articles_controller
 from layers.models.v1.db_handler import SessionDep

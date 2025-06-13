@@ -1,7 +1,8 @@
 from fastapi import HTTPException
 from layers.models.v1.db_handler import SessionDep
 from sqlmodel import Field, Relationship, SQLModel, col, delete, select
-
+from datetime import datetime
+from utils.data_models import data_models
 # Definicion de entidades
 
 class ArticlesBase(SQLModel):
@@ -14,13 +15,16 @@ class Articles(ArticlesBase, table=True):
     dictionary_of_words_item: list["Articles_Dictionary"] = Relationship(back_populates="article")
     entities_item: list["Articles_Entities"] = Relationship(back_populates="article")
     types_words_item: list["Articles_Types_Words"] = Relationship(back_populates="article")
-class ArticlesCreate(ArticlesBase):
-    dictionary_of_words: dict
-    entities: list
-    type_of_words: list
+    creation_date: datetime = Field(default_factory=lambda: datetime.now())
 
 class ArticlesPublic(ArticlesBase):
     id: int
+    dictionary_of_words: dict
+    entities: list
+    type_of_words: list
+    creation_date: datetime = Field(default_factory=lambda: datetime.now())
+
+class ArticlesCreate(ArticlesBase):
     dictionary_of_words: dict
     entities: list
     type_of_words: list
@@ -101,7 +105,10 @@ class ArticlesModel():
         article = session.get(Articles, article_id)
 
         if not article:
-            raise HTTPException(status_code=404, detail="Artículo no encontrado")
+            raise HTTPException(status_code=404, detail="Artículo para eliminar no encontrado")
+
+        # nota: ignore el error de tipado aqui porque es un error
+        # actual de sqlmodel, chequea: https://github.com/fastapi/sqlmodel/issues/909
 
         entities = delete(Articles_Entities).where(col(Articles_Entities.id_article) == article_id)
         session.exec(entities) # type: ignore
@@ -125,12 +132,13 @@ class ArticlesModel():
         session.commit()
 
         article_object = {
-            "id": article.id,
-            "article_name": article.article_name,
-            "article_summary": article.article_summary,
-            "dictionary_of_words": article.dictionary_of_words_item,
-            "type_word": article.types_words_item,
-            "entities": article.entities_item
+            data_models.article_model["ID"]: article.id,
+            data_models.article_model["name"]: article.article_name,
+            data_models.article_model["summary"]: article.article_summary,
+            data_models.article_model["dictionary"]: article.dictionary_of_words_item,
+            data_models.article_model["type_words"]: article.types_words_item,
+            data_models.article_model["entities"]: article.entities_item,
+            data_models.article_model["note"]: article.note
         }
 
         return article_object
@@ -139,17 +147,19 @@ class ArticlesModel():
         articles_list_not_processed = select(
             Articles.id,
             Articles.article_name,
-            Articles.article_summary
+            Articles.article_summary,
+            Articles.creation_date
         ).offset(offset).limit(10)
         articles_list_not_processed = session.exec(articles_list_not_processed)
 
         articles_list_processed = []
 
-        for article_id, article_name, article_summary in articles_list_not_processed:
+        for article_id, article_name, article_summary, creation_date in articles_list_not_processed:
             articles_list_processed.append({
-                "id": article_id,
-                "article_name":article_name,
-                "article_summary": article_summary
+                data_models.article_model["ID"]: article_id,
+                data_models.article_model["name"]:article_name,
+                data_models.article_model["summary"]: article_summary,
+                data_models.article_model["created_at"]: creation_date
             })
 
         return articles_list_processed
@@ -158,7 +168,7 @@ class ArticlesModel():
         db_article = session.get(Articles, article_id)
 
         if not db_article:
-            raise HTTPException(status_code=404, detail="Artículo no encontrado")
+            raise HTTPException(status_code=404, detail="Artículo para actualizar no encontrado")
         
         article_data = article_object.model_dump(exclude_unset=True)
         db_article.sqlmodel_update(article_data)

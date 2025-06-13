@@ -1,40 +1,38 @@
 import os
 from dotenv import load_dotenv
-from sqlalchemy import URL
+from spacy.language import Language
 
 load_dotenv()
 
 class Settings():
-    API_V1_STR: str = "/api/v1"
-    POSTGRES_URL: str = "postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}".format(
-        user=os.getenv("POSTGRES_USER"),
-        password=os.getenv("POSTGRES_PASSWORD"),
-        host=os.getenv("POSTGRES_SERVER"),
-        port=os.getenv("POSTGRES_PORT"),
-        database=os.getenv("POSTGRES_DB")
-    )
-    WIKIPEDIA_API_URL: str = "https://en.wikipedia.org/w/api.php"
-    STOP_WORDS: set = set([
-        "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at",
-        "be", "because", "been", "before", "being", "below", "between", "both", "but", "by",
-        "can't", "cannot", "could", "couldn't", "did", "didn't", "do", "does", "doesn't", "doing", "don't",
-        "down", "during", "each", "few", "for", "from", "further",
-        "had", "hadn't", "has", "hasn't", "have", "haven't", "having",
-        "he", "he'd", "he'll", "he's", "her", "here", "here's", "hers", "herself",
-        "him", "himself", "his", "how", "how's",
-        "i", "i'd", "i'll", "i'm", "i've",
-        "if", "in", "into", "is", "isn't", "it", "it's", "its", "itself",
-        "let's",
-        "me", "more", "most", "mustn't", "my", "myself",
-        "no", "nor", "not",
-        "of", "off", "on", "once", "only", "or", "other", "ought", "our", "ours", "ourselves", "out", "over", "own",
-        "same", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "so", "some", "such",
-        "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then", "there", "there's", "these", "they", "they'd", "they'll", "they're", "they've",
-        "this", "those", "through", "to", "too",
-        "under", "until", "up",
-        "very",
-        "was", "wasn't", "we", "we'd", "we'll", "we're", "we've", "were", "weren't", "what", "what's", "when", "when's", "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "will", "with", "won't", "would", "wouldn't",
-        "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves"
-    ])
+    def __init__(self):
+        self.API_V1_STR: str = "/api/v1"
+        self.POSTGRES_URL: str = "postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}".format(
+            user=os.getenv("POSTGRES_USER"),
+            password=os.getenv("POSTGRES_PASSWORD"),
+            host=os.getenv("POSTGRES_SERVER"),
+            port=os.getenv("POSTGRES_PORT"),
+            database=os.getenv("POSTGRES_DB")
+        )
+        self.model_for_recognizing_language: Language
+        self.WIKIPEDIA_API_URL: str = "https://es.wikipedia.org/w/api.php"
+        self.STOP_WORDS: set = set([
+            "de", "la", "que", "el", "en", "y", "a", "los", "del", "se", "las", "por", "un", "para", "con", "no", "una", "su", "al", "lo",
+            "como", "más", "pero", "sus", "le", "ya", "o", "este", "sí", "porque", "esta", "entre", "cuando", "muy", "sin", "sobre", "también",
+            "me", "hasta", "hay", "donde", "quien", "desde", "todo", "esto", "nos", "poco", "mi", "tener", "haciendo", "hace", "hacer", "todo",
+            "él", "ella", "ellos", "ellas", "usted", "ustedes", "vosotros", "vosotras", "mío", "mía", "míos", "mías", "tuyo", "tuya", "tuyos",
+            "tuyas", "suyo", "suya", "suyos", "suyas", "nuestro", "nuestra", "nuestros", "nuestras", "vuestro", "vuestra", "vuestros", "vuestras",
+            "ese", "esa", "esos", "esas", "aquí", "allí", "así", "tal", "varios", "varias", "mucho", "muchos", "mucha", "muchas", "cuanto",
+            "cuantos", "cuanta", "cuantas", "poco", "pocos", "poca", "pocas", "demasiado", "demasiados", "demasiada", "demasiadas", "cada",
+            "misma", "mismo", "mismos", "mismas", "otro", "otra", "otros", "otras", "ser", "estar", "ir", "haber", "tener", "poder", "saber",
+            "querer", "deber", "decir", "hablar", "ver", "dar", "venir", "ir", "hacer", "parecer", "resultar", "seguir", "encontrar", "colocar",
+            "utilizar", "conseguir", "emplear", "lograr", "mencionar", "observar", "explicar", "considerar", "presentar", "demostrar", "indicar",
+            "mostrar", "señalar", "desarrollar", "realizar", "llevar", "acabar", "terminar", "comenzar", "empezar", "continuar", "volver", "quedar",
+            "ocurrir", "suceder", "apenas", "quizá", "quizás", "acaso", "pronto", "tarde", "siempre", "nunca", "jamás", "hoy", "ayer", "mañana",
+            "bien", "mal", "mejor", "peor", "casi", "además", "entonces", "luego", "después", "durante", "mediante", "junto", "según", "respecto",
+            "excepto", "salvo", "incluso", "sino", "aunque", "mientras", "apenas", "tan", "tanto", "antes", "después", "arriba", "abajo", "dentro",
+            "fuera", "delante", "detrás", "encima", "debajo", "cerca", "lejos", "junto", "frente", "enfrente", "contra", "hacia", "hasta", "mediante",
+            "para", "por", "según", "sin", "sobre", "tras", "durante", "vía"
+        ])
 
 settings = Settings()
