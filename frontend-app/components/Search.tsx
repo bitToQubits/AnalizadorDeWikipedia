@@ -13,7 +13,6 @@ import { useRouter } from 'next/navigation';
 import { extractTermFromUrl } from "@/utils/dataConversions";
 
 export const Search = () => {
-
     const [searchTerm, writeSearchTerm] = React.useState("");
     const [wikipediaArticles, setWikipediaArticles] = React.useState([]);
     const router = useRouter();
@@ -28,7 +27,7 @@ export const Search = () => {
             key={crypto.randomUUID()}
             className="cursor-pointer" 
             onClick={() => redirectUserToAnalyzePage(wikipedia[1])}>
-            <TableCell className="font-medium p-2">{wikipedia[0]}</TableCell>
+            <TableCell className="font-medium pt-3 pb-3">{wikipedia[0]}</TableCell>
         </TableRow>
     );
 
@@ -49,7 +48,7 @@ export const Search = () => {
                 }
                 toast.error(error.message);
             });
-        }, 1000);
+        }, 500);
 
         return () => clearTimeout(debouncer);
     }, [searchTerm]);
@@ -59,7 +58,7 @@ export const Search = () => {
         <Input
             type="text"
             placeholder="Buscar..."
-            className="w-full text-lg p-5"
+            className="w-full p-5 h-12"
             onChange={(event) => writeSearchTerm(event.target.value)}
         />
         <div className="max-h-85 overflow-y-auto mt-2">

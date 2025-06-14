@@ -22,6 +22,8 @@ export const Analyze = () => {
         article_name: "No determinado"
     });
     const [dictionary, setDictionary] = useState<tupleDictionary[]>([]);
+    const [isHydrated, setIsHydrated] = useState(false);
+    const [theTermIsAnArticle, setTheTermIsAnArticle] = useState(false);
 
     const decodeWikipediaTerm = (encodedWikipediaTerm: string) => {
         let wikipedia_name = decodeURIComponent(encodedWikipediaTerm);
@@ -50,9 +52,16 @@ export const Analyze = () => {
     }
 
     useEffect(() => {
-        axios
+        setIsHydrated(true);
+    }, []);
+
+    useEffect(() => {
+        if(!isHydrated) return;
+
+        const petitionToFetchArticle = axios
         .get(process.env.NEXT_PUBLIC_SERVER_URL+`articles/analyze/${encodedWikipediaTerm}`)
         .then((response) => {
+            setTheTermIsAnArticle(true);
             setWikipediaArticle({
                 ...response.data,
                 article_name: wikipedia_name
@@ -64,7 +73,11 @@ export const Analyze = () => {
             }
             toast.error(error.message);
         });
-    }, [encodedWikipediaTerm]);
+
+        toast.promise(petitionToFetchArticle, {
+          loading: 'Cargando...'
+        });
+    }, [isHydrated])
 
     useEffect(() => {
         const dictionarySorted =
@@ -72,17 +85,17 @@ export const Analyze = () => {
             .map(([word, count]) => [word, Number(count)] as tupleDictionary)
             .sort(([, a], [, b]) => b - a);
         setDictionary(dictionarySorted);
-    }, [wikipediaArticle])
+    }, [wikipediaArticle]);
 
     return (
         <main className="lg:max-w-8/10 lg:pr-0 lg:pl-0 pt-15 m-auto pr-5 pl-5">
             <section>
                 <div className="mb-3">
-                    <h1 className="text-3xl font-bold mb-5 lg:inline">{wikipedia_name}</h1>
+                    <h1 className="text-3xl font-bold mb-5 lg:inline bg-zinc-100 text-gray-950 p-1 rounded">{wikipedia_name}</h1>
                     <Button asChild className="mb-2 mr-3 lg:mr-0 lg:inline lg:float-right">
                         <Link href="/">Volver al buscador</Link>
                     </Button>
-                    <Button onClick={saveArticle} className="mb-2 mr-2 lg:inline lg:float-right cursor-pointer bg-green-500 hover:bg-green-500 text-primary-foreground">
+                    <Button onClick={saveArticle} disabled={!theTermIsAnArticle} className="outline mb-2 mr-2 lg:inline lg:float-right cursor-pointer bg-green-500 hover:bg-green-500 text-primary-foreground">
                         Guardar
                     </Button>
                 </div>

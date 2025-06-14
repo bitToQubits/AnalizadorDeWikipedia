@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react"
 import { toast } from "sonner";
+import { NUMERICAL_LIMIT_PER_PAGE_ARTICLES } from "@/utils/constants";
 
 type ArticleItem = {
     id: number,
@@ -20,6 +21,7 @@ export const MyArticles = () => {
     const [totalNumberArticles, setTotalNumberArticles] = useState(0);
     const [offset, setOffset] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [isHydrated, setIsHydrated] = useState(false);
 
     const regenerateArticles = (offset: number) => {
         setLoading(true);
@@ -51,7 +53,7 @@ export const MyArticles = () => {
 
     const articlesHTMLElements = myArticles.map(article => 
         <li 
-            key={crypto.randomUUID()} 
+            key={article.id} 
             className="bg-zinc-100 text-gray-950 my-3 p-2 rounded cursor-pointer" 
             onClick={() => { router.push("/article?id="+article.id) }}>
             <div>
@@ -65,15 +67,15 @@ export const MyArticles = () => {
     const goBackPagination = () => {
         if(loading) return;
 
-        const newOffset = (offset - 6) < 0 ? 0 : offset - 6;
+        const newOffset = (offset - NUMERICAL_LIMIT_PER_PAGE_ARTICLES) < 0 ? 0 : offset - 6;
         setOffset(newOffset);
         regenerateArticles(newOffset);
     }
 
     const goAheadPagination = () => {
-        if((offset + 6) >= totalNumberArticles || loading) return;
+        if((offset + NUMERICAL_LIMIT_PER_PAGE_ARTICLES) >= totalNumberArticles || loading) return;
         
-        const newOffset = offset + 6;
+        const newOffset = offset + NUMERICAL_LIMIT_PER_PAGE_ARTICLES;
         setOffset(newOffset);
         regenerateArticles(newOffset);
     }
@@ -86,26 +88,36 @@ export const MyArticles = () => {
 
     const goLastPagination = () => {
         if(loading) return;
-        const newOffset = totalNumberArticles > 6 ? totalNumberArticles - 6 : 0;
+        const newOffset = 
+        totalNumberArticles > NUMERICAL_LIMIT_PER_PAGE_ARTICLES ? 
+        totalNumberArticles - NUMERICAL_LIMIT_PER_PAGE_ARTICLES : 0;
         setOffset(newOffset);
         regenerateArticles(newOffset);
     }
 
     const calculateActualPage = (offset:number, totalNumberArticles:number) => {
-        const total_number_of_pages = Math.ceil(totalNumberArticles / 6);
-        let how_much_pages_ahead = (totalNumberArticles - offset) / 6;
-        if(how_much_pages_ahead < 0)
-            return total_number_of_pages;
-        how_much_pages_ahead = Math.ceil(how_much_pages_ahead);
-        return total_number_of_pages - how_much_pages_ahead + 1;
+        if(totalNumberArticles == 0){
+            return 0;
+        }
+        const totalNumberOfPages = Math.ceil(totalNumberArticles / NUMERICAL_LIMIT_PER_PAGE_ARTICLES);
+        let howMuchPagesAhead = (totalNumberArticles - offset) / NUMERICAL_LIMIT_PER_PAGE_ARTICLES;
+        if(howMuchPagesAhead < 0)
+            return totalNumberOfPages;
+        howMuchPagesAhead = Math.ceil(howMuchPagesAhead);
+        return totalNumberOfPages - howMuchPagesAhead + 1;
     }
 
     useEffect(() => {
-        regenerateArticles(0);
+        setIsHydrated(true);
     }, []);
 
+    useEffect(() => {
+        if(!isHydrated) return;
+        regenerateArticles(0);
+    }, [isHydrated]);
+
     return (
-        <main className="lg:max-w-6/10 lg:p-0 ml-auto mr-auto mt-20 p-6">
+        <main className="lg:max-w-6/10 lg:p-0 ml-auto mr-auto mt-13 p-6 ">
             <section className="m-auto">
                 <div className="mb-7">
                     <h1 className="text-5xl lg:inline font-semibold lg:text-center">
@@ -115,6 +127,7 @@ export const MyArticles = () => {
                         <Link href="/">Volver al buscador</Link>
                     </Button>
                 </div>
+                {myArticles.length == 0 && (<p>No tienes artículos guardados</p>)}
             </section>
             <section>
                 <ul className="mb-2">
@@ -123,10 +136,10 @@ export const MyArticles = () => {
                     }
                 </ul>
                 <div>
-                    <p className="inline"><b>{totalNumberArticles}</b> resultados</p>
+                    <p className="inline"><b>{totalNumberArticles}</b> resultado(s)</p>
                     <div className="lg:float-right">
                         <p className="lg:inline mr-3 mb-3 lg:mb-0">
-                            Página {calculateActualPage(offset, totalNumberArticles)} de {Math.ceil(totalNumberArticles / 6)}
+                            Página {calculateActualPage(offset, totalNumberArticles)} de {Math.ceil(totalNumberArticles / NUMERICAL_LIMIT_PER_PAGE_ARTICLES)}
                         </p>
                         <Button 
                             onClick={goFirstPagination} 

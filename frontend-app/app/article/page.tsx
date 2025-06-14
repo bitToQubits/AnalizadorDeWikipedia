@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
 import { extractTermFromUrl } from "@/utils/dataConversions";
 import { Textarea } from "@/components/ui/textarea";
@@ -36,6 +36,7 @@ export const SavedArticle = () => {
     });
     const [note, setNotes] = useState("");
     const [dictionary, setDictionary] = useState<tupleDictionary[]>([]);
+    const [isHydrated, setIsHydrated] = useState(false);
 
     const encodedWikipediaTerm = extractTermFromUrl(wikipediaArticle.article_name);
 
@@ -53,6 +54,10 @@ export const SavedArticle = () => {
         });
     }
 
+    const handleChangeNote = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setNotes(event.target.value);
+    }, []);
+
     const removeArticle = () => {
         axios
         .delete(process.env.NEXT_PUBLIC_SERVER_URL+`articles/`+articleId)
@@ -69,7 +74,13 @@ export const SavedArticle = () => {
     }
 
     useEffect(() => {
-        axios
+        setIsHydrated(true);
+    }, []);
+
+    useEffect(() => {
+        if(!isHydrated) return;
+
+        const petitionToFetchArticle = axios
         .get(process.env.NEXT_PUBLIC_SERVER_URL+`articles/`+articleId)
         .then((response) => {
             setWikipediaArticle(response.data);
@@ -81,7 +92,11 @@ export const SavedArticle = () => {
             }
             toast.error(error.message);
         });
-    }, [articleId]);
+
+        toast.promise(petitionToFetchArticle, {
+          loading: 'Cargando...'
+        });
+    }, [isHydrated]);
 
     useEffect(() => {
         const dictionarySorted =
@@ -91,25 +106,27 @@ export const SavedArticle = () => {
         setDictionary(dictionarySorted);
     }, [wikipediaArticle]);
 
+    if(!isHydrated) return null;
+
     return (
         <main className="lg:max-w-8/10 lg:pr-0 lg:pl-0 pt-15 m-auto pr-5 pl-5">
             <section>
                     <div className="mb-3">
-                        <h1 className="text-3xl font-bold mb-5 lg:inline">{wikipediaArticle.article_name}</h1>
+                        <h1 className="text-3xl font-bold mb-5 lg:inline bg-zinc-100 text-gray-950 p-1 rounded">{wikipediaArticle.article_name}</h1>
                         <Button asChild className="mb-2 mr-3 lg:mr-0 lg:inline lg:float-right">
                             <Link href="/">Volver al buscador</Link>
                         </Button>
-                        <Button asChild className="mb-2 mr-2 lg:inline lg:float-right cursor-pointer bg-green-500 hover:bg-green-500 text-primary-foreground">
+                        <Button asChild className="mb-2 mr-2 lg:inline lg:float-right cursor-pointer bg-transparent hover:bg-zinc-200 text-dark">
                             <Link href="/my-articles">Mis artículos</Link>
                         </Button>
                     </div>
                 </section>
                 <Article encodedWikipediaTerm={encodedWikipediaTerm} wikipediaArticle={wikipediaArticle} dictionary={dictionary} />
                 <section className="mt-8">
-                    <h4 className="mb-4">Notas</h4>
+                    <h4 className="text-xl font-medium mb-4 bg-zinc-100 text-gray-950 p-1 rounded">Notas</h4>
                     <Textarea 
                         value={note} 
-                        onChange={e => setNotes(e.target.value)} />
+                        onChange={handleChangeNote} />
                     <div className="mt-5 mb-5">
                         <Button onClick={saveNotes} className="mr-5 cursor-pointer bg-green-500">Guardar nota</Button>
                         <AlertDialog>

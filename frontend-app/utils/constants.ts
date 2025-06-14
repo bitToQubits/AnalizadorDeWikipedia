@@ -1,0 +1,1 @@
+export const NUMERICAL_LIMIT_PER_PAGE_ARTICLES = 6;

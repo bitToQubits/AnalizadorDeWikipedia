@@ -26,7 +26,7 @@ type ArticleProps = {
 export const Article = ({encodedWikipediaTerm, wikipediaArticle, dictionary}: ArticleProps) => {
     return (
         <>
-            <section>
+            <section className="bg-zinc-100 text-gray-950 my-3 p-2 rounded">
                 <a 
                     className="text-xl underline decoration-indigo-500 text-indigo-500 break-all" 
                     href={"https://es.wikipedia.org/wiki/"+encodedWikipediaTerm}>
@@ -35,10 +35,12 @@ export const Article = ({encodedWikipediaTerm, wikipediaArticle, dictionary}: Ar
                 <div className="mt-5 mb-5">
                     <p>{wikipediaArticle["article_summary"]}</p>
                 </div>
+            </section>
+            <section>
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
                     <article className="mt-7 lg:mt-0">
-                        <h3 className="lg:text-base text-xl mb-4 font-semibold">
-                            50 palabras más usadas. Excluyendo stop words.
+                        <h3 className="lg:text-xl text-xl mb-4 font-semibold bg-zinc-100 text-gray-950 p-1 rounded">
+                            50 palabras más usadas
                         </h3>
                         <div className="max-h-75 overflow-y-auto mt-2">
                             <Table>
@@ -60,9 +62,10 @@ export const Article = ({encodedWikipediaTerm, wikipediaArticle, dictionary}: Ar
                                 </TableBody>
                             </Table>
                         </div>
+                        <small className="mt-2">Excluyendo stop words</small>
                     </article>
                     <article className="mt-7 lg:mt-0">
-                        <h3 className="lg:text-lg text-xl mb-3 font-semibold">
+                        <h3 className="lg:text-lg text-xl mb-3 font-semibold bg-zinc-100 text-gray-950 p-1 rounded">
                             50 entidades del artículo
                         </h3>
                         <div className="max-h-75 overflow-y-auto mt-2">
@@ -87,7 +90,7 @@ export const Article = ({encodedWikipediaTerm, wikipediaArticle, dictionary}: Ar
                         </div>
                     </article>
                     <article className="mt-7 lg:mt-0">
-                        <h3 className="lg:text-lg text-xl mb-3 font-semibold">
+                        <h3 className="lg:text-lg text-xl mb-3 font-semibold bg-zinc-100 text-gray-950 p-1 rounded">
                             50 tipo de palabras
                         </h3>
                         <div className="max-h-75 overflow-y-auto mt-2">
