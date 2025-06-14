@@ -5,6 +5,7 @@ from utils.config import settings
 import wikipedia
 from layers.models.v1.articles_model import ArticlesCreate, ArticlesUpdate, articles_model, ArticlesPublic
 
+
 wikipedia.set_lang("es")
 class ArticlesService:
     def search_wikipedia(self, search_term: str):
@@ -48,7 +49,9 @@ class ArticlesService:
         array_of_words = article_page.content.split()
 
         for word in array_of_words:
-            if word not in settings.STOP_WORDS:
+            if(all(char == "=" for char in word)):
+                continue
+            if word.lower() not in settings.STOP_WORDS:
                 if dictionary_of_words.get(word) is None:
                     dictionary_of_words[word] = 1
                 else:

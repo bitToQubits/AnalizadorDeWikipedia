@@ -4,6 +4,7 @@ from layers.models.v1.db_handler import SessionDep
 from layers.models.v1.articles_model import ArticlesCreate, ArticlesUpdate
 from layers.services.v1.articles_service import articles_service
 from wikipedia.exceptions import PageError, DisambiguationError, HTTPTimeoutError
+from requests.exceptions import ConnectionError
 import sys
 from utils.response_messages import responses
 
@@ -17,6 +18,8 @@ class ArticlesController():
         try:
             results_search = articles_service.search_wikipedia(search_term)
         except HTTPTimeoutError:
+            raise HTTPException(status_code=500, detail=responses.error["WIKIPEDIA_SERVERS"])
+        except ConnectionError:
             raise HTTPException(status_code=500, detail=responses.error["WIKIPEDIA_SERVERS"])
         else:
             return JSONResponse(content=results_search, status_code=200)
