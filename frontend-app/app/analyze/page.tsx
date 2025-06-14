@@ -39,10 +39,13 @@ export const Analyze = () => {
         .then((response) => {
             const articleId = response.data.article_id;
             router.push(`/article?id=${articleId}`);
-            toast(response.data.message);
+            toast.success(response.data.message);
         })
         .catch((error) => {
-            toast(error.message);
+            if(error?.response?.data?.message){
+                return toast.error(error.response.data.message);
+            }
+            toast.error(error.message);
         });
     }
 
@@ -56,7 +59,10 @@ export const Analyze = () => {
             })
         })
         .catch((error) => {
-            toast(error.message)
+            if(error?.response?.data?.message){
+                return toast.error(error.response.data.message);
+            }
+            toast.error(error.message);
         });
     }, [encodedWikipediaTerm]);
 
@@ -69,14 +75,14 @@ export const Analyze = () => {
     }, [wikipediaArticle])
 
     return (
-        <main className="max-w-8/10 pt-15 m-auto">
+        <main className="lg:max-w-8/10 lg:pr-0 lg:pl-0 pt-15 m-auto pr-5 pl-5">
             <section>
                 <div className="mb-3">
-                    <h1 className="text-3xl font-bold mb-3 inline">{wikipedia_name}</h1>
-                    <Button asChild className="mb-2 inline float-right">
+                    <h1 className="text-3xl font-bold mb-5 lg:inline">{wikipedia_name}</h1>
+                    <Button asChild className="mb-2 mr-3 lg:mr-0 lg:inline lg:float-right">
                         <Link href="/">Volver al buscador</Link>
                     </Button>
-                    <Button onClick={saveArticle} className="mb-2 mr-2 inline float-right hover:bg-green-500 hover:cursor-pointer bg-green-500 text-primary-foreground">
+                    <Button onClick={saveArticle} className="mb-2 mr-2 lg:inline lg:float-right cursor-pointer bg-green-500 hover:bg-green-500 text-primary-foreground">
                         Guardar
                     </Button>
                 </div>

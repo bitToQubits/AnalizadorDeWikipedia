@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from layers.models.v1.db_handler import SessionDep
-from sqlmodel import Field, Relationship, SQLModel, col, delete, select
+from sqlmodel import Field, Relationship, SQLModel, col, delete, func, select
 from datetime import datetime
 from utils.data_models import data_models
 # Definicion de entidades
@@ -150,8 +150,11 @@ class ArticlesModel():
             Articles.article_name,
             Articles.article_summary,
             Articles.creation_date
-        ).offset(offset).limit(10)
+        ).offset(offset).limit(6)
         articles_list_not_processed = session.exec(articles_list_not_processed)
+
+        all_articles = select(func.count().label("count")).select_from(Articles)
+        count = session.exec(all_articles)
 
         articles_list_processed = []
 
@@ -163,7 +166,12 @@ class ArticlesModel():
                 data_models.article_model["created_at"]: creation_date
             })
 
-        return articles_list_processed
+        pagination_results = {
+            "count": count.one(),
+            "articles_list": articles_list_processed
+        }
+
+        return pagination_results
     
     def update_article(self, article_object: ArticlesUpdate, article_id: int, session: SessionDep):
         db_article = session.get(Articles, article_id)

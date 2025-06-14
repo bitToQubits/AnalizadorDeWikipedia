@@ -44,7 +44,10 @@ export const Search = () => {
                 setWikipediaArticles(response.data)
             })
             .catch((error) => {
-                toast(error.message)
+                if(error?.response?.data?.message){
+                    return toast.error(error.response.data.message);
+                }
+                toast.error(error.message);
             });
         }, 1000);
 

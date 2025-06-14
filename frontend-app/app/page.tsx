@@ -1,23 +1,23 @@
 import { Search } from "@/components/Search";
 import Link from "next/link";
-import { Toaster } from "@/components/ui/sonner"
 import { Button } from "@/components/ui/button";
 
-export default function Home() {
+export const Home = () => {
   return (
-    <main className="max-w-6/10 ml-auto mr-auto mt-20">
+    <main className="lg:max-w-6/10 lg:p-0 ml-auto mr-auto mt-20 p-5">
       <section className="m-auto">
           <div className="mb-7">
-            <h1 className="text-5xl inline font-semibold text-center">
+            <h1 className="text-5xl lg:inline font-semibold text-center">
               AnalizarWikipedia
             </h1>
-            <Button asChild className="inline float-right">
+            <Button asChild className="lg:inline lg:float-right lg:mt-0 mt-5">
               <Link href="/my-articles">Articulos Guardados</Link>
             </Button>
           </div>
           <Search/>
       </section>
-      <Toaster />
     </main>
   );
 }
+
+export default Home;

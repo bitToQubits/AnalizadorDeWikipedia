@@ -7,12 +7,22 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { extractTermFromUrl } from "@/utils/dataConversions";
-import { Textarea } from "@/components/ui/textarea"
+import { Textarea } from "@/components/ui/textarea";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type tupleDictionary = [string, number];
 
 export const SavedArticle = () => {
-
     const router = useRouter();
     const searchParams = useSearchParams()
     const articleId = searchParams.get('id');
@@ -29,15 +39,47 @@ export const SavedArticle = () => {
 
     const encodedWikipediaTerm = extractTermFromUrl(wikipediaArticle.article_name);
 
+    const saveNotes = () => {
+        axios
+        .patch(process.env.NEXT_PUBLIC_SERVER_URL+`articles/`+articleId, {note})
+        .then((response) => {
+            toast.success(response.data.message);
+        })
+        .catch((error) => {
+            if(error?.response?.data?.message){
+                return toast.error(error.response.data.message);
+            }
+            toast.error(error.message);
+        });
+    }
+
+    const removeArticle = () => {
+        axios
+        .delete(process.env.NEXT_PUBLIC_SERVER_URL+`articles/`+articleId)
+        .then((response) => {
+            toast.success(response.data.message);
+            router.push("/my-articles");
+        })
+        .catch((error) => {
+            if(error?.response?.data?.message){
+                return toast.error(error.response.data.message);
+            }
+            toast.error(error.message);
+        });
+    }
+
     useEffect(() => {
         axios
         .get(process.env.NEXT_PUBLIC_SERVER_URL+`articles/`+articleId)
         .then((response) => {
             setWikipediaArticle(response.data);
-            setNotes(response.data.note);
+            setNotes(response.data.note ?? "");
         })
         .catch((error) => {
-            toast(error.message);
+            if(error?.response?.data?.message){
+                return toast.error(error.response.data.message);
+            }
+            toast.error(error.message);
         });
     }, [articleId]);
 
@@ -49,24 +91,16 @@ export const SavedArticle = () => {
         setDictionary(dictionarySorted);
     }, [wikipediaArticle]);
 
-    const saveNotes = () => {
-        axios
-        .patch(process.env.NEXT_PUBLIC_SERVER_URL+`articles/`+articleId, {note})
-        .then((response) => {
-            toast(response.data.message);
-        })
-        .catch((error) => {
-            toast(error.message);
-        });
-    }
-
     return (
-        <main className="max-w-8/10 pt-15 m-auto">
+        <main className="lg:max-w-8/10 lg:pr-0 lg:pl-0 pt-15 m-auto pr-5 pl-5">
             <section>
                     <div className="mb-3">
-                        <h1 className="text-3xl font-bold mb-3 inline">{wikipediaArticle.article_name}</h1>
-                        <Button asChild className="mb-2 inline float-right">
+                        <h1 className="text-3xl font-bold mb-5 lg:inline">{wikipediaArticle.article_name}</h1>
+                        <Button asChild className="mb-2 mr-3 lg:mr-0 lg:inline lg:float-right">
                             <Link href="/">Volver al buscador</Link>
+                        </Button>
+                        <Button asChild className="mb-2 mr-2 lg:inline lg:float-right cursor-pointer bg-green-500 hover:bg-green-500 text-primary-foreground">
+                            <Link href="/my-articles">Mis artículos</Link>
                         </Button>
                     </div>
                 </section>
@@ -77,8 +111,24 @@ export const SavedArticle = () => {
                         value={note} 
                         onChange={e => setNotes(e.target.value)} />
                     <div className="mt-5 mb-5">
-                        <Button onClick={saveNotes} className="mr-5 hover:cursor-pointer hover:bg-green-500 bg-green-500">Guardar nota</Button>
-                        <Button className="hover:cursor-pointer hover:bg-red-800 bg-red-800">Eliminar este artículo</Button>
+                        <Button onClick={saveNotes} className="mr-5 cursor-pointer bg-green-500">Guardar nota</Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button className="cursor-pointer bg-red-800">Eliminar este artículo</Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Esta acción es irreversible. El artículo guardado no se podrá recuperar.
+                                </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel className="cursor-pointer">Cancelar</AlertDialogCancel>
+                                    <AlertDialogAction className="cursor-pointer" onClick={removeArticle}>Continuar</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
                 </section>
         </main>
