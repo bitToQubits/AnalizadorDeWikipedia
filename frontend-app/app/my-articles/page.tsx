@@ -135,7 +135,7 @@ export const MyArticles = () => {
                         articlesHTMLElements
                     }
                 </ul>
-                <div>
+                <div className="mb-10">
                     <p className="inline"><b>{totalNumberArticles}</b> resultado(s)</p>
                     <div className="lg:float-right">
                         <p className="lg:inline mr-3 mb-3 lg:mb-0">

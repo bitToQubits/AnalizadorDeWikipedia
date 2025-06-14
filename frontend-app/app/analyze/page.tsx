@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Article } from "@/components/Article";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { NOT_AVAILABLE } from "@/utils/constants";
 
 type tupleDictionary = [string, number];
 
@@ -15,11 +16,11 @@ export const Analyze = () => {
     const encodedWikipediaTerm = searchParams.get('w');
     const [wikipediaArticle, setWikipediaArticle] = 
     useState({
-        article_summary: "No determinado.",
+        article_summary: NOT_AVAILABLE,
         dictionary_of_words: {},
         entities: [],
         type_of_words: [],
-        article_name: "No determinado"
+        article_name: NOT_AVAILABLE
     });
     const [dictionary, setDictionary] = useState<tupleDictionary[]>([]);
     const [isHydrated, setIsHydrated] = useState(false);

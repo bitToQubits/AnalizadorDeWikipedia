@@ -19,6 +19,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { NOT_AVAILABLE } from "@/utils/constants";
 
 type tupleDictionary = [string, number];
 
@@ -28,11 +29,11 @@ export const SavedArticle = () => {
     const articleId = searchParams.get('id');
     const [wikipediaArticle, setWikipediaArticle] = 
     useState({
-        article_summary: "No determinado.",
+        article_summary: NOT_AVAILABLE,
         dictionary_of_words: {},
         entities: [],
         type_of_words: [],
-        article_name: "No determinado"
+        article_name: NOT_AVAILABLE
     });
     const [note, setNotes] = useState("");
     const [dictionary, setDictionary] = useState<tupleDictionary[]>([]);
