@@ -3,13 +3,13 @@
 
 Proyecto que es capaz de realizar peticiones a la API de Wikipedia, curar y procesar los resultados para finalmente hacer CRUD sobre estos. Consta de un frontend escrito en NextJS (Typescript) y un backend en FastAPI (python).
 
-Cumple con todos los requirimientos **obligatorios** y **opcionales** especificados.
+Cumple con todos los requerimientos **obligatorios** y **opcionales** especificados.
 
-## Instalacion
+## Instalación
 
 Requisitos preliminares: 
 
-- Debes tener NodeJS 19 o superiors
+- Debes tener NodeJS 19 o superior
 - Debes tener Python 3.10 o superior
 - Debes tener PostgreSQL 16 o superior
 
