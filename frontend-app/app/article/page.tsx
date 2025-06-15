@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "sonner";
-import { extractTermFromUrl } from "@/utils/dataConversions";
+import { extractTermFromUrl } from "@/lib/dataConversions";
 import { Textarea } from "@/components/ui/textarea";
 import {
   AlertDialog,
@@ -19,7 +19,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { NOT_AVAILABLE } from "@/utils/constants";
+import { NOT_AVAILABLE } from "@/lib/constants";
 
 type tupleDictionary = [string, number];
 
@@ -106,8 +106,6 @@ export const SavedArticle = () => {
             .sort(([, a], [, b]) => b - a);
         setDictionary(dictionarySorted);
     }, [wikipediaArticle]);
-
-    if(!isHydrated) return null;
 
     return (
         <main className="lg:max-w-8/10 lg:pr-0 lg:pl-0 pt-15 m-auto pr-5 pl-5">

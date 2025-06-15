@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Article } from "@/components/Article";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { NOT_AVAILABLE } from "@/utils/constants";
+import { NOT_AVAILABLE } from "@/lib/constants";
 
 type tupleDictionary = [string, number];
 
@@ -87,8 +87,6 @@ export const Analyze = () => {
             .sort(([, a], [, b]) => b - a);
         setDictionary(dictionarySorted);
     }, [wikipediaArticle]);
-
-    if(!isHydrated) return null;
 
     return (
         <main className="lg:max-w-8/10 lg:pr-0 lg:pl-0 pt-15 m-auto pr-5 pl-5 pb-10">

@@ -1,111 +1,110 @@
 # General
-*.DS_Store
-*.env
-*.flaskenv
-*.log
-*.sqlite
-*.sqlite3
-*/tmp
+backend-api/.DS_Store
+backend-api/.flaskenv
+backend-api/*.log
+backend-api/*.sqlite
+backend-api/*.sqlite3
+backend-api/tmp
 
 # Python
-*__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.Python
-*env/
-*venv/
-*ENV/
-*env.bak/
-*venv.bak/
-*/htmlcov/
-*.tox/
-*.coverage
-*.coverage.*
-*.cache
-*nosetests.xml
-*coverage.xml
-*.egg-info/
-*.installed.cfg
-*.egg
-*MANIFEST
+backend-api/**/__pycache__/
+backend-api/*.pyc
+backend-api/*.pyo
+backend-api/*.pyd
+backend-api/.Python
+backend-api/env/
+backend-api/venv/
+backend-api/ENV/
+backend-api/env.bak/
+backend-api/venv.bak/
+backend-api//htmlcov/
+backend-api/.tox/
+backend-api/.coverage
+backend-api/.coverage.*
+backend-api/.cache
+backend-api/nosetests.xml
+backend-api/coverage.xml
+backend-api/*.egg-info/
+backend-api/.installed.cfg
+backend-api/*.egg
+backend-api/*MANIFEST
 
 # Distribution / Packaging
-*.Python
-*build/
-*develop-eggs/
-*dist/
-*downloads/
-*eggs/
-*.eggs/
-*lib/
-*lib64/
-*parts/
-*sdist/
-*var/
-*wheels/
-*share/python-wheels/
-*.egg-info/
-*.installed.cfg
-*.egg
-*MANIFEST.in
+backend-api/.Python
+backend-api/build/
+backend-api/develop-eggs/
+backend-api/dist/
+backend-api/downloads/
+backend-api/eggs/
+backend-api/.eggs/
+backend-api/lib/
+backend-api/lib64/
+backend-api/parts/
+backend-api/sdist/
+backend-api/var/
+backend-api/wheels/
+backend-api/share/python-wheels/
+backend-api/*.egg-info/
+backend-api/.installed.cfg
+backend-api/*.egg
+backend-api/MANIFEST.in
 
 # Jupyter Notebook
-*.ipynb_checkpoints
+backend-api/.ipynb_checkpoints
 
 # MyPy
-*.mypy_cache/
-*.dmypy.json
-*dmypy.json
+backend-api/.mypy_cache/
+backend-api/.dmypy.json
+backend-api/dmypy.json
 
 # Pytest
-*.pytest_cache/
+backend-api/.pytest_cache/
 
 # Node.js
-*node_modules/
-*npm-debug.log*
-*yarn-debug.log*
-*yarn-error.log*
-*lerna-debug.log*
-*.pnpm-debug.log*
-*.yarn/
-*.pnpm-store/
+frontend-app/node_modules/
+frontend-app/npm-debug.log*
+frontend-app/yarn-debug.log*
+frontend-app/yarn-error.log*
+frontend-app/lerna-debug.log*
+frontend-app/.pnpm-debug.log*
+frontend-app/.yarn/
+frontend-app/.pnpm-store/
 
 # Editor directories and files
-*.idea/
-*.vscode/
-*.swp
-*.bak
-*.swo
-*~
-.editorconfig
+frontend-app/.idea/
+frontend-app/.vscode/
+frontend-app/*.swp
+frontend-app/*.bak
+frontend-app/*.swo
+frontend-app/*~
+frontend-app/.editorconfig
 
 # testing
-*/coverage
+frontend-app/*coverage
 
 # next.js
-*/.next/
-*/out/
+frontend-app/*.next/
+frontend-app/*out/
 
 # production
-*/build
+frontend-app/*build
 
 # misc
-*.DS_Store
-*.pem
+frontend-app/*.DS_Store
+frontend-app/*.pem
 
 # debug
-*npm-debug.log*
-*yarn-debug.log*
-*yarn-error.log*
-*.pnpm-debug.log*
+frontend-app/*npm-debug.log*
+frontend-app/*yarn-debug.log*
+frontend-app/*yarn-error.log*
+frontend-app/*.pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
 *.env*
 
 # vercel
-*.vercel
+frontend-app/*.vercel
 
 # typescript
-*.tsbuildinfo
-*next-env.d.ts
+frontend-app/*.tsbuildinfo
+frontend-app/*next-env.d.ts

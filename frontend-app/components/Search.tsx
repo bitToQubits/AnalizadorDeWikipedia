@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRouter } from 'next/navigation';
-import { extractTermFromUrl } from "@/utils/dataConversions";
+import { extractTermFromUrl } from "@/lib/dataConversions";
 
 export const Search = () => {
     const [searchTerm, writeSearchTerm] = React.useState("");
@@ -22,9 +22,9 @@ export const Search = () => {
         router.push(`/analyze?w=${wikipediaTerm}`)
     }
     
-    const listWikipediaArticles = wikipediaArticles.map((wikipedia, index) => (
+    const listWikipediaArticles = wikipediaArticles.map((wikipedia) => (
         <TableRow 
-            key={index}
+            key={wikipedia[1]}
             className="cursor-pointer" 
             onClick={() => redirectUserToAnalyzePage(wikipedia[1])}>
             <TableCell className="font-medium pt-3 pb-3">{wikipedia[0]}</TableCell>
@@ -54,7 +54,7 @@ export const Search = () => {
     }, [searchTerm]);
 
   return (
-    <section>
+    <section suppressHydrationWarning>
         <Input
             type="text"
             placeholder="Buscar..."
