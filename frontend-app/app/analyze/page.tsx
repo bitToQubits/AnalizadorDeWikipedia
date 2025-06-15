@@ -1,30 +1,16 @@
-"use client";
+import { AnalyzedArticleContainer } from "@/components/AnalyzedArticleContainer";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { toast } from "sonner";
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Article } from "@/components/Article";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { NOT_AVAILABLE } from "@/lib/constants";
+import { Error } from "@/components/Error";
+import { errorHandler } from "@/hooks/errorHandler";
+interface AnalyzedArticlePageProp {
+    searchParams: { w: string }
+}
 
-type tupleDictionary = [string, number];
-
-export const Analyze = () => {
-    const router = useRouter();
-    const searchParams = useSearchParams()
-    const wikipediaTerm = searchParams.get('w');
-    const [wikipediaArticle, setWikipediaArticle] = 
-    useState({
-        article_summary: NOT_AVAILABLE,
-        dictionary_of_words: {},
-        entities: [],
-        type_of_words: [],
-        article_name: NOT_AVAILABLE
-    });
-    const [dictionary, setDictionary] = useState<tupleDictionary[]>([]);
-    const [isHydrated, setIsHydrated] = useState(false);
-    const [theTermIsAnArticle, setTheTermIsAnArticle] = useState(false);
+export const Analyze = async ({ searchParams }: AnalyzedArticlePageProp) => {
+    let {w:wikipediaTerm} = await searchParams;
+    let theTermIsAnArticle:boolean = false;
+    let errorMessage:string = "";
+    let petitionToFetchArticle: any;
 
     const decodeWikipediaTerm = (wikipediaTerm: string) => {
         let wikipediaName = decodeURIComponent(wikipediaTerm);
@@ -35,74 +21,27 @@ export const Analyze = () => {
     const wikipediaName = 
     typeof wikipediaTerm == "string" ? 
     decodeWikipediaTerm(wikipediaTerm) : "";
+    
+    try {
+        petitionToFetchArticle = 
+        await axios
+        .get(process.env.NEXT_PUBLIC_SERVER_URL+`articles/analyze/${wikipediaName}`);
 
-    const saveArticle = () => {
-        axios
-        .post(process.env.NEXT_PUBLIC_SERVER_URL+`articles/`, wikipediaArticle)
-        .then((response) => {
-            const articleId = response.data.article_id;
-            router.push(`/article?id=${articleId}`);
-            toast.success(response.data.message);
-        })
-        .catch((error) => {
-            if(error?.response?.data?.message){
-                return toast.error(error.response.data.message);
-            }
-            toast.error(error.message);
-        });
+        theTermIsAnArticle = true;
+        petitionToFetchArticle.data.article_name = wikipediaName;
+    } catch(error:any) {
+        theTermIsAnArticle = false;
+        errorMessage = errorHandler(error);
     }
 
-    useEffect(() => {
-        setIsHydrated(true);
-    }, []);
-
-    useEffect(() => {
-        if(!isHydrated) return;
-
-        const petitionToFetchArticle = axios
-        .get(process.env.NEXT_PUBLIC_SERVER_URL+`articles/analyze/${wikipediaName}`)
-        .then((response) => {
-            setTheTermIsAnArticle(true);
-            setWikipediaArticle({
-                ...response.data,
-                article_name: wikipediaName
-            })
-        })
-        .catch((error) => {
-            if(error?.response?.data?.message){
-                return toast.error(error.response.data.message);
-            }
-            toast.error(error.message);
-        });
-
-        toast.promise(petitionToFetchArticle, {
-          loading: 'Cargando...'
-        });
-    }, [isHydrated])
-
-    useEffect(() => {
-        const dictionarySorted =
-        Object.entries(wikipediaArticle["dictionary_of_words"])
-            .map(([word, count]) => [word, Number(count)] as tupleDictionary)
-            .sort(([, a], [, b]) => b - a);
-        setDictionary(dictionarySorted);
-    }, [wikipediaArticle]);
+    if(!theTermIsAnArticle){
+        return (
+           <Error message={errorMessage}/>
+        )
+    }
 
     return (
-        <main className="lg:max-w-8/10 lg:pr-0 lg:pl-0 pt-15 m-auto pr-5 pl-5 pb-10">
-            <section>
-                <div className="mb-3">
-                    <h1 className="text-3xl font-bold mb-5 lg:inline bg-zinc-100 text-gray-950 p-1 rounded">{wikipediaName}</h1>
-                    <Button asChild className="mb-2 mr-3 lg:mr-0 lg:inline lg:float-right">
-                        <Link href="/">Volver al buscador</Link>
-                    </Button>
-                    <Button onClick={saveArticle} disabled={!theTermIsAnArticle} className="outline mb-2 mr-2 lg:inline lg:float-right cursor-pointer bg-green-500 hover:bg-green-500 text-primary-foreground">
-                        Guardar
-                    </Button>
-                </div>
-            </section>
-            <Article wikipediaTerm={wikipediaTerm} wikipediaArticle={wikipediaArticle} dictionary={dictionary} />
-        </main>
+        <AnalyzedArticleContainer wikipediaTerm={wikipediaTerm} wikipediaName={wikipediaName} wikipediaArticle={petitionToFetchArticle.data}/>
     )
 }
 

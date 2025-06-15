@@ -1,7 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 import {
   Table,
@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { useRouter } from 'next/navigation';
 import { extractTermFromUrl } from "@/lib/dataConversions";
+import { errorHandler } from "@/hooks/errorHandler";
 
 export const Search = () => {
     const [searchTerm, writeSearchTerm] = React.useState("");
@@ -43,31 +44,28 @@ export const Search = () => {
                 setWikipediaArticles(response.data)
             })
             .catch((error) => {
-                if(error?.response?.data?.message){
-                    return toast.error(error.response.data.message);
-                }
-                toast.error(error.message);
+                toast.error(errorHandler(error));
             });
         }, 500);
 
         return () => clearTimeout(debouncer);
     }, [searchTerm]);
 
-  return (
-    <section suppressHydrationWarning>
-        <Input
-            type="text"
-            placeholder="Buscar..."
-            className="w-full p-5 h-12"
-            onChange={(event) => writeSearchTerm(event.target.value)}
-        />
-        <div className="max-h-85 overflow-y-auto mt-2">
-            <Table>
-                <TableBody>
-                    {listWikipediaArticles}
-                </TableBody>
-            </Table>
-        </div>
-    </section>
-  )
+    return (
+        <section>
+            <Input
+                type="text"
+                placeholder="Buscar..."
+                className="w-full p-5 h-12"
+                onChange={(event) => writeSearchTerm(event.target.value)}
+            />
+            <div className="max-h-85 overflow-y-auto mt-2">
+                <Table>
+                    <TableBody>
+                        {listWikipediaArticles}
+                    </TableBody>
+                </Table>
+            </div>
+        </section>
+    )
 }

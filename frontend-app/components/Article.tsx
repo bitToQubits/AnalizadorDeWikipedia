@@ -8,18 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-
-type ArticleProps = {
-    wikipediaTerm: string | null,
-    wikipediaArticle: {
-        article_summary: string,
-        dictionary_of_words: { [key: string]: number },
-        entities: [string, string][],
-        type_of_words: [string, string][],
-        article_name: string
-    },
-    dictionary: [string, number][]
-}
+import { ArticleProps } from "@/lib/types";
 
 export const Article = ({wikipediaTerm, wikipediaArticle, dictionary}: ArticleProps) => {
     return (

@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { NUMERICAL_LIMIT_PER_PAGE_ARTICLES } from "@/lib/constants";
 import { ArticleItem } from "@/lib/types";
 import { getArticles } from "@/hooks/getArticles";
@@ -30,6 +30,7 @@ export const ArticleList = ({articles, totalArticles}: ArticleProps) => {
         .then((response) => {
             setMyArticles(response.articles);
             setTotalNumberArticles(response.count);
+            setLoading(false);
         });
     }
 
@@ -43,6 +44,7 @@ export const ArticleList = ({articles, totalArticles}: ArticleProps) => {
         .then((response) => {
             setMyArticles(response.articles);
             setTotalNumberArticles(response.count);
+            setLoading(false);
         });
     }
 
@@ -55,6 +57,7 @@ export const ArticleList = ({articles, totalArticles}: ArticleProps) => {
         .then((response) => {
             setMyArticles(response.articles);
             setTotalNumberArticles(response.count);
+            setLoading(false);
         });
     }
 
@@ -70,6 +73,7 @@ export const ArticleList = ({articles, totalArticles}: ArticleProps) => {
         .then((response) => {
             setMyArticles(response.articles);
             setTotalNumberArticles(response.count);
+            setLoading(false);
         });
     }
 
