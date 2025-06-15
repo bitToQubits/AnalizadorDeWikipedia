@@ -38,7 +38,7 @@ export const Article = ({wikipediaTerm, wikipediaArticle, dictionary}: ArticlePr
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
                     <article className="mt-7 lg:mt-0">
                         <h3 className="lg:text-xl text-xl mb-4 font-semibold bg-zinc-100 text-gray-950 p-1 rounded">
-                            50 palabras más usadas
+                            {dictionary.length} palabras más usadas
                         </h3>
                         <div className="max-h-75 overflow-y-auto mt-2">
                             <Table>
@@ -50,12 +50,12 @@ export const Article = ({wikipediaTerm, wikipediaArticle, dictionary}: ArticlePr
                                 </TableHeader>
                                 <TableBody>
                                 {
-                                        dictionary.map(dictionaryElement => 
-                                            <TableRow key={crypto.randomUUID()}>
-                                                <TableCell>{dictionaryElement[0]}</TableCell>
-                                                <TableCell>{dictionaryElement[1]}</TableCell>
-                                            </TableRow>
-                                        )
+                                    dictionary.map((dictionaryElement, index) => 
+                                        <TableRow key={index}>
+                                            <TableCell>{dictionaryElement[0]}</TableCell>
+                                            <TableCell>{dictionaryElement[1]}</TableCell>
+                                        </TableRow>
+                                    )
                                 }
                                 </TableBody>
                             </Table>
@@ -76,12 +76,12 @@ export const Article = ({wikipediaTerm, wikipediaArticle, dictionary}: ArticlePr
                                 </TableHeader>
                                 <TableBody>
                                 {
-                                        wikipediaArticle["entities"].map(entity => 
-                                            <TableRow key={crypto.randomUUID()}>
-                                                <TableCell>{entity[0]}</TableCell>
-                                                <TableCell>{entity[1]}</TableCell>
-                                            </TableRow>
-                                        )
+                                    wikipediaArticle["entities"].map((entity, index) => 
+                                        <TableRow key={index}>
+                                            <TableCell>{entity[0]}</TableCell>
+                                            <TableCell>{entity[1]}</TableCell>
+                                        </TableRow>
+                                    )
                                 }
                                 </TableBody>
                             </Table>
@@ -89,7 +89,7 @@ export const Article = ({wikipediaTerm, wikipediaArticle, dictionary}: ArticlePr
                     </article>
                     <article className="mt-7 lg:mt-0">
                         <h3 className="lg:text-lg text-xl mb-3 font-semibold bg-zinc-100 text-gray-950 p-1 rounded">
-                            50 tipo de palabras
+                            Tipo de palabras
                         </h3>
                         <div className="max-h-75 overflow-y-auto mt-2">
                             <Table>
@@ -101,12 +101,12 @@ export const Article = ({wikipediaTerm, wikipediaArticle, dictionary}: ArticlePr
                                 </TableHeader>
                                 <TableBody>
                                 {
-                                        wikipediaArticle["type_of_words"].map(type_word => 
-                                            <TableRow key={crypto.randomUUID()}>
-                                                <TableCell>{type_word[0]}</TableCell>
-                                                <TableCell>{type_word[1]}</TableCell>
-                                            </TableRow>
-                                        )
+                                    wikipediaArticle["type_of_words"].map((type_word, index) => 
+                                        <TableRow key={index}>
+                                            <TableCell>{type_word[0]}</TableCell>
+                                            <TableCell>{type_word[1]}</TableCell>
+                                        </TableRow>
+                                    )
                                 }
                                 </TableBody>
                             </Table>

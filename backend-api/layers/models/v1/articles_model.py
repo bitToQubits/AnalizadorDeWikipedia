@@ -150,7 +150,7 @@ class ArticlesModel():
             Articles.article_name,
             Articles.article_summary,
             Articles.creation_date
-        ).offset(offset).limit(6)
+        ).offset(offset).limit(6).order_by(col(Articles.id).desc())
         articles_list_not_processed = session.exec(articles_list_not_processed)
 
         all_articles = select(func.count().label("count")).select_from(Articles)

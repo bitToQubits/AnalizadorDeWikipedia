@@ -22,14 +22,14 @@ export const Search = () => {
         router.push(`/analyze?w=${wikipediaTerm}`)
     }
     
-    const listWikipediaArticles = wikipediaArticles.map(wikipedia =>
+    const listWikipediaArticles = wikipediaArticles.map((wikipedia, index) => (
         <TableRow 
-            key={crypto.randomUUID()}
+            key={index}
             className="cursor-pointer" 
             onClick={() => redirectUserToAnalyzePage(wikipedia[1])}>
             <TableCell className="font-medium pt-3 pb-3">{wikipedia[0]}</TableCell>
         </TableRow>
-    );
+    ));
 
     React.useEffect(() => {
         const debouncer = setTimeout(() => {

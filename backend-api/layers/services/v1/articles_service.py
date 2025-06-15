@@ -24,15 +24,10 @@ class ArticlesService:
         request = request_session.get(url=url_wikipedia, params=request_params)
         request = request.json()
         
-        # Procesamos la respuesta.
+        if not isinstance(request, list):
+            return []
 
-        wikipedia_results = \
-        list(
-            map(
-                lambda article_name, article_link: (article_name, article_link), 
-                request[1], request[3]
-            )
-        )
+        wikipedia_results = list(zip(request[1], request[3]))
 
         return wikipedia_results
     
@@ -65,8 +60,8 @@ class ArticlesService:
         dictionary_of_words = \
         {k: v for k, v in sorted(dictionary_of_words.items(), key=lambda item: item[1], reverse=True)}
 
-        if len(dictionary_of_words) >= 50:
-            dictionary_of_words = dict(list(dictionary_of_words.items())[:50])
+        if len(dictionary_of_words) >= settings.MAXIMUM_WORDS_TO_DO_NLP:
+            dictionary_of_words = dict(list(dictionary_of_words.items())[:settings.MAXIMUM_WORDS_TO_DO_NLP])
 
         string_most_common_words = " ".join(list(dictionary_of_words))
         
@@ -74,14 +69,14 @@ class ArticlesService:
         text_processed_for_entities = settings.model_for_recognizing_language(string_most_common_words)
 
         for index, entity in enumerate(text_processed_for_entities.ents):
-            if index == 50:
+            if index == settings.MAXIMUM_WORDS_TO_DO_NLP:
                 break
             entities.append((entity.text, entity.label_))
 
         # Identificando que tipo de palabra es cada una
         # verbo, pronom, etc
         for index, type_word in enumerate(text_processed_for_entities):
-            if index == 50:
+            if index == settings.MAXIMUM_WORDS_TO_DO_NLP:
                 break
 
             if(type_word.pos_ in settings.TRANSLATIONS_WORD_TYPE):

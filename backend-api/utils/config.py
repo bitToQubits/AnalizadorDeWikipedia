@@ -37,5 +37,6 @@ class Settings():
             "VERB": "Verbo",
             "X": "Otro"
         }
+        self.MAXIMUM_WORDS_TO_DO_NLP = 100
 
 settings = Settings()
