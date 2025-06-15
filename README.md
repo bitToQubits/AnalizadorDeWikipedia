@@ -3,13 +3,15 @@
 
 Proyecto que es capaz de realizar peticiones a la API de Wikipedia, curar y procesar los resultados para finalmente hacer CRUD sobre estos. Consta de un frontend escrito en NextJS (Typescript) y un backend en FastAPI (python).
 
+Cumple con todos los requirimientos **obligatorios** y **opcionales** especificados.
 
 ## Instalacion
 
 Requisitos preliminares: 
 
-- Debes tener NodeJS 19 o superior.
-- Debes tener Python 3.10 o superior.
+- Debes tener NodeJS 19 o superiors
+- Debes tener Python 3.10 o superior
+- Debes tener PostgreSQL 16 o superior
 
 Clona o descarga el repositorio en tu directorio de referencia
 
@@ -117,12 +119,67 @@ Decidí utilizar una arquitectura limpia basada en capas dado que identifiqué q
     pytest articles_unit_tests.py
 ```
 
+#### Modelo de datos
+
+**Modelo de los artículos**
+
+Modelo que representa un artículo.
+
+| Campo        | Descripción  |
+|--------------|--------------|
+| `id` | PRIMARY KEY (integer) |
+| `article_name` | character varying |
+| `article_summary` | character varying |
+| `note` | character varying |
+| `creation_date` | character varying |
+
+**Modelo de diccionario**
+
+Modelo que representa el diccionario de palabras de un artículo. Máximo seran 100 entradas por artículo 
+(las mas repetidas)
+
+| Campo      | Descripción |
+|------------|-------------|
+| `id` | PRIMARY KEY (integer) |
+| `id_article` | integer |
+| `name` | character varying |
+| `counter` | integer |
+
+**Modelo de entidades**
+
+Modelo que representa las entidades detectadas en un artículo. 
+Calculadas a partir de las 100 entradas del diccionario.
+
+| Campo      | Descripción |
+|------------|-------------|
+| `id` | PRIMARY KEY (integer) |
+| `id_article` | integer |
+| `word` | character varying |
+| `entity` | character varying |
+
+---
+
+**Modelo de tipo de palabras**
+
+Modelo que representa el tipo gramatical de palabras dentro de un artículo. 
+Calculadas a partir de las 100 entradas del diccionario.
+
+| Campo      | Descripción |
+|------------|-------------|
+| `id` | PRIMARY KEY (integer) |
+| `id_article` | integer |
+| `word` | character varying |
+| `type_word` | character varying |
+
+
 #### NextJS
 
 Utilice el patrón por defecto que usa NextJS basado en páginas y componentes. Implementé logica de manejo de estado (carga, error, exito) en cada una de las peticiones. Tambien aproveché el SSR que ofrece NextJS para acelarar los tiempos de carga iniciales. Modularizé y abstraí funciones y módulos para aplicar los principios DRY.
 ## Endpoints de la API
 
 Nota: los (...) indican que puede haber mas de un elemento en esa colección
+
+### Buscar articulos en Wikipedia
 
 ``GET`` /search_wikipedia/{search_term}
 
@@ -145,6 +202,8 @@ Cuerpo de respuesta
     ...
 ]
 ```
+
+### Procesar y obtener un artículo de wikipedia
 
 ``GET`` /articles/analyze/{wikipedia_identificator}
 
@@ -182,6 +241,8 @@ wikipedia_identificator (requerido) -> string [nombre del artículo al cual real
 
 }
 ```
+
+### Guardar un artículo en la BD.
 
 `` POST `` /articles/
 
@@ -222,6 +283,8 @@ Guarda un artículo.
 }
 ```
 
+### Eliminar un artículo de la BD
+
 ``DELETE`` /articles/{article_id}
 
 Elimina un artículo
@@ -239,6 +302,8 @@ article_id (requerido) -> number [id del artículo el cual eliminar]
     "message": "string"
 }
 ```
+
+### Obtener una lista de artículos de la BD
 
 `` GET `` /articles/list?offset={offset}
 
@@ -266,6 +331,8 @@ offset (requerido) -> number [a partir de que elemento listar resultados]
     ]
 }
 ```
+
+### Obtener un artículo de la BD
 
 `` GET `` /articles/{article_id}
 
@@ -307,6 +374,8 @@ article_id (requerido) -> number [el id del artículo a obtener]
 }
 ```
 
+### Actualizar un artículo de la BD
+
 `` patch `` /articles/{article_id}
 
 Actualiza el artículo. Solo la nota del artículo puede ser actualizada según requerimientos del proyecto.
@@ -324,3 +393,5 @@ article_id (requerido) -> number [el id del artículo a actualizar]
     "message": "string"
 }
 ```
+
+## Por Jorge Luis Báez
