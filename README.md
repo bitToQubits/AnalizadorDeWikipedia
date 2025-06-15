@@ -37,7 +37,7 @@ Ahora vamos a activar este ambiente virtual (Usuarios Windows)
 venv\Scripts\activate
 ```
 
-Si estas en MacOS o Linux, ejecuta este comando
+Alternativamente, si estas en MacOS o Linux, ejecuta este comando
 
 ```
 source venv/bin/activate
@@ -107,9 +107,9 @@ Solo debes ejecutar el frontend con `` npm run dev `` y ya estas ready! ✅
 
 #### API
 
-Decidí utilizar una arquitectura limpia basada en capas dado que identifiqué que habrian multiples entidades que el sistema manejaria, y lo mejor era separar las responsabilidades de manera inteligente para que cuando el sistema se vuelva más complejo se más facil agregar nuevos módulos.
+Decidí utilizar una arquitectura limpia basada en capas dado que identifiqué que habrian multiples entidades que el sistema manejaria, y lo mejor era separar las responsabilidades de manera inteligente para que cuando el sistema se vuelva más complejo sea más facil agregar nuevos módulos.
 
-- Controladores: Capa que maneja la sanitizacion de la data y el manejo de excepciones dentro de la API
+- Controladores: Capa que maneja la sanitización de la data y el manejo de excepciones dentro de la API 
 - Servicios: La lógica de negocio está presente aquí. La información se procesa en esta capa.
 - Modelos: La capa que hace interacciones con la BD. Esta se encarga de almacenar los modelos de la data, y realizar operaciones con la BD.
 - Tambien tenemos un middleware que maneja los routers de la API.
@@ -119,7 +119,7 @@ Decidí utilizar una arquitectura limpia basada en capas dado que identifiqué q
     pytest articles_unit_tests.py
 ```
 
-#### Modelo de datos
+### Modelo de datos
 
 **Modelo de los artículos**
 
@@ -136,7 +136,7 @@ Modelo que representa un artículo.
 **Modelo de diccionario**
 
 Modelo que representa el diccionario de palabras de un artículo. Máximo seran 100 entradas por artículo 
-(las mas repetidas)
+(las más repetidas en el artículo)
 
 | Campo      | Descripción |
 |------------|-------------|
@@ -171,17 +171,19 @@ Calculadas a partir de las 100 entradas del diccionario.
 | `word` | character varying |
 | `type_word` | character varying |
 
+El modelo de los artículos tiene una relación de una a muchos con los demas modelos. Tiene un índice y clave foranea en id_article con los demás modelos, lo que permite
+integridad de los datos y consultas rápidas.
 
 #### NextJS
 
 Utilice el patrón por defecto que usa NextJS basado en páginas y componentes. Implementé logica de manejo de estado (carga, error, exito) en cada una de las peticiones. Tambien aproveché el SSR que ofrece NextJS para acelarar los tiempos de carga iniciales. Modularizé y abstraí funciones y módulos para aplicar los principios DRY.
 ## Endpoints de la API
 
-Nota: los (...) indican que puede haber mas de un elemento en esa colección
+Nota: los (...) indican que puede haber más de un elemento en esa colección
 
 ### Buscar articulos en Wikipedia
 
-``GET`` /search_wikipedia/{search_term}
+``GET`` /articles/search_wikipedia/{search_term}
 
 Te permite buscar un termino en Wikipedia
 
@@ -196,7 +198,7 @@ Cuerpo de respuesta
 ```
 [
     [
-        "string [termino que hizo en match]",
+        "string [termino que hizo match]",
         "string [url del termino]"
     ]
     ...
@@ -384,6 +386,12 @@ Actualiza el artículo. Solo la nota del artículo puede ser actualizada según 
 
 ```
 article_id (requerido) -> number [el id del artículo a actualizar]
+```
+
+```
+{
+    "note": "string"
+}
 ```
 
 `` JSON `` Cuerpo de la respuesta
