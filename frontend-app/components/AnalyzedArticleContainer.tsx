@@ -20,16 +20,20 @@ export const AnalyzedArticleContainer = ({wikipediaName, wikipediaArticle, wikip
     const router = useRouter();
 
     const [dictionary, setDictionary] = useState<tupleDictionary[]>([]);
+    const [isSaving, setIsSaving] = useState(false);
 
     const saveArticle = () => {
+        setIsSaving(true);
         axios
         .post(process.env.NEXT_PUBLIC_SERVER_URL+`articles/`, wikipediaArticle)
         .then((response) => {
             const articleId = response.data.article_id;
             router.push(`/article?id=${articleId}`);
             toast.success(response.data.message);
+            setIsSaving(false);
         })
         .catch((error) => {
+            setIsSaving(false);
             toast.error(errorHandler(error));
         });
     }
@@ -50,7 +54,7 @@ export const AnalyzedArticleContainer = ({wikipediaName, wikipediaArticle, wikip
                     <Button asChild className="mb-2 mr-3 lg:mr-0 lg:inline lg:float-right">
                         <Link href="/">Volver al buscador</Link>
                     </Button>
-                    <Button onClick={saveArticle} className="outline mb-2 mr-2 lg:inline lg:float-right cursor-pointer bg-green-500 hover:bg-green-500 text-primary-foreground">
+                    <Button onClick={saveArticle} disabled={isSaving} className="outline mb-2 mr-2 lg:inline lg:float-right cursor-pointer bg-green-500 hover:bg-green-500 text-primary-foreground">
                         Guardar
                     </Button>
                 </div>
