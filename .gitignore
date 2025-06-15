@@ -58,7 +58,7 @@ backend-api/.dmypy.json
 backend-api/dmypy.json
 
 # Pytest
-backend-api/.pytest_cache/
+backend-api/**/.pytest_cache/
 
 # Node.js
 frontend-app/node_modules/
