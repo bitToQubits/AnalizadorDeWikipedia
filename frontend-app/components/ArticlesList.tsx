@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { NUMERICAL_LIMIT_PER_PAGE_ARTICLES } from "@/lib/constants";
 import { ArticleItem } from "@/lib/types";
 import { getArticles } from "@/hooks/getArticles";

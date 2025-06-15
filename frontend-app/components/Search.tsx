@@ -1,7 +1,7 @@
 "use client";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { startTransition, useTransition } from "react";
 import { toast } from "sonner";
 import {
   Table,
@@ -17,10 +17,14 @@ export const Search = () => {
     const [searchTerm, writeSearchTerm] = React.useState("");
     const [wikipediaArticles, setWikipediaArticles] = React.useState([]);
     const router = useRouter();
+    const [articleIsLoading, startTransition] = useTransition();
 
     const redirectUserToAnalyzePage = (wikipediaUrl: string) => {
-        const wikipediaTerm = extractTermFromUrl(wikipediaUrl)
-        router.push(`/analyze?w=${wikipediaTerm}`)
+        if(articleIsLoading) return;
+        startTransition(() => {
+            const wikipediaTerm = extractTermFromUrl(wikipediaUrl)
+            router.push(`/analyze?w=${wikipediaTerm}`)
+        });
     }
     
     const listWikipediaArticles = wikipediaArticles.map((wikipedia) => (
@@ -50,6 +54,18 @@ export const Search = () => {
 
         return () => clearTimeout(debouncer);
     }, [searchTerm]);
+
+    React.useEffect(() => {
+        if(articleIsLoading){
+            toast.loading("Cargando artículo..");
+        }
+    }, [articleIsLoading]);
+
+    React.useEffect(() => {
+        return () => {
+            toast.dismiss();
+        }
+    }, []);
 
     return (
         <section>

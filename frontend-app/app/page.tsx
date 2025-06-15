@@ -7,7 +7,7 @@ export const Home = () => {
     <main className="lg:max-w-6/10 lg:p-0 ml-auto mr-auto mt-20 p-5">
       <section className="m-auto">
           <div className="mb-7">
-            <h1 className="text-5xl lg:inline font-semibold text-center">
+            <h1 className="lg:text-5xl lg:inline font-semibold text-center text-2xl">
               AnalizarWikipedia
             </h1>
             <Button asChild className="lg:inline lg:float-right lg:mt-0 mt-5">
