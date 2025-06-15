@@ -56,7 +56,7 @@ class ArticlesService:
 
             word = re.sub(r'[^a-zA-ZÀ-ÿ]', '', word)
             
-            if word not in settings.STOP_WORDS and word != "":
+            if word not in settings.STOP_WORDS and word != "" and len(word) > 1:
                 if dictionary_of_words.get(word) is None:
                     dictionary_of_words[word] = 1
                 else:
