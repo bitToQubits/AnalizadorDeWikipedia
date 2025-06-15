@@ -17,9 +17,9 @@ export const Search = () => {
     const [wikipediaArticles, setWikipediaArticles] = React.useState([]);
     const router = useRouter();
 
-    const redirectUserToAnalyzePage = (wikipedia_url: string) => {
-        const wikipedia_term = extractTermFromUrl(wikipedia_url)
-        router.push(`/analyze?w=${wikipedia_term}`)
+    const redirectUserToAnalyzePage = (wikipediaUrl: string) => {
+        const wikipediaTerm = extractTermFromUrl(wikipediaUrl)
+        router.push(`/analyze?w=${wikipediaTerm}`)
     }
     
     const listWikipediaArticles = wikipediaArticles.map(wikipedia =>

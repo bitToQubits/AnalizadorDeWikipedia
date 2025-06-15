@@ -4,7 +4,7 @@ from utils.data_models import data_models
 from utils.config import settings
 import wikipedia
 from layers.models.v1.articles_model import ArticlesCreate, ArticlesUpdate, articles_model, ArticlesPublic
-
+import re
 
 wikipedia.set_lang("es")
 class ArticlesService:
@@ -39,6 +39,9 @@ class ArticlesService:
     def analyze_wikipedia_article(self, wikipedia_identificator: str):
         article_summary = wikipedia.summary(wikipedia_identificator, sentences = 3)
 
+        article_summary = re.sub(r'={2,}[^=]*={2,}', '', article_summary)
+        article_summary = re.sub(r'\[\d+\]', '', article_summary)
+
         article_page = wikipedia.page(wikipedia_identificator)
 
         dictionary_of_words = {}
@@ -49,23 +52,26 @@ class ArticlesService:
         array_of_words = article_page.content.split()
 
         for word in array_of_words:
-            if(all(char == "=" for char in word)):
-                continue
-            if word.lower() not in settings.STOP_WORDS:
+            word = word.lower()
+
+            word = re.sub(r'[^a-zA-ZÀ-ÿ]', '', word)
+            
+            if word not in settings.STOP_WORDS and word != "":
                 if dictionary_of_words.get(word) is None:
                     dictionary_of_words[word] = 1
                 else:
                     dictionary_of_words[word] += 1
 
-        # Cortesia de GeeksForGeeks
         dictionary_of_words = \
         {k: v for k, v in sorted(dictionary_of_words.items(), key=lambda item: item[1], reverse=True)}
 
         if len(dictionary_of_words) >= 50:
             dictionary_of_words = dict(list(dictionary_of_words.items())[:50])
+
+        string_most_common_words = " ".join(list(dictionary_of_words))
         
         # Reconocimiento de entidades
-        text_processed_for_entities = settings.model_for_recognizing_language(article_page.content)
+        text_processed_for_entities = settings.model_for_recognizing_language(string_most_common_words)
 
         for index, entity in enumerate(text_processed_for_entities.ents):
             if index == 50:
@@ -77,7 +83,13 @@ class ArticlesService:
         for index, type_word in enumerate(text_processed_for_entities):
             if index == 50:
                 break
-            type_of_words.append((type_word.text, type_word.pos_))
+
+            if(type_word.pos_ in settings.TRANSLATIONS_WORD_TYPE):
+                type_word_in_spanish = settings.TRANSLATIONS_WORD_TYPE[type_word.pos_]
+            else:
+                type_word_in_spanish = type_word.pos_
+
+            type_of_words.append((type_word.text, type_word_in_spanish))
         
         return {
             "article_summary": article_summary,

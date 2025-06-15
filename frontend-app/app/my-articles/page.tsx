@@ -116,6 +116,8 @@ export const MyArticles = () => {
         regenerateArticles(0);
     }, [isHydrated]);
 
+    if(!isHydrated) return null;
+
     return (
         <main className="lg:max-w-6/10 lg:p-0 ml-auto mr-auto mt-13 p-6 ">
             <section className="m-auto">

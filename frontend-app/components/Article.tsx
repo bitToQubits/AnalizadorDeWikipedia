@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/table"
 
 type ArticleProps = {
-    encodedWikipediaTerm: string | null,
+    wikipediaTerm: string | null,
     wikipediaArticle: {
         article_summary: string,
         dictionary_of_words: { [key: string]: number },
@@ -21,14 +21,14 @@ type ArticleProps = {
     dictionary: [string, number][]
 }
 
-export const Article = ({encodedWikipediaTerm, wikipediaArticle, dictionary}: ArticleProps) => {
+export const Article = ({wikipediaTerm, wikipediaArticle, dictionary}: ArticleProps) => {
     return (
         <>
             <section className="bg-zinc-100 text-gray-950 my-3 p-2 rounded">
                 <a 
                     className="text-xl underline decoration-indigo-500 text-indigo-500 break-all" 
-                    href={"https://es.wikipedia.org/wiki/"+encodedWikipediaTerm}>
-                    https://es.wikipedia.org/wiki/{encodedWikipediaTerm}
+                    href={"https://es.wikipedia.org/wiki/"+wikipediaTerm}>
+                    https://es.wikipedia.org/wiki/{wikipediaTerm}
                 </a>
                 <div className="mt-5 mb-5">
                     <p>{wikipediaArticle["article_summary"]}</p>
@@ -64,7 +64,7 @@ export const Article = ({encodedWikipediaTerm, wikipediaArticle, dictionary}: Ar
                     </article>
                     <article className="mt-7 lg:mt-0">
                         <h3 className="lg:text-lg text-xl mb-3 font-semibold bg-zinc-100 text-gray-950 p-1 rounded">
-                            50 entidades del artículo
+                            Entidades del artículo
                         </h3>
                         <div className="max-h-75 overflow-y-auto mt-2">
                             <Table>

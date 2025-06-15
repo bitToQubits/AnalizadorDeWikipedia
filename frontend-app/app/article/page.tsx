@@ -39,7 +39,7 @@ export const SavedArticle = () => {
     const [dictionary, setDictionary] = useState<tupleDictionary[]>([]);
     const [isHydrated, setIsHydrated] = useState(false);
 
-    const encodedWikipediaTerm = extractTermFromUrl(wikipediaArticle.article_name);
+    const wikipediaTerm = extractTermFromUrl(wikipediaArticle.article_name);
 
     const saveNotes = () => {
         axios
@@ -122,7 +122,7 @@ export const SavedArticle = () => {
                         </Button>
                     </div>
                 </section>
-                <Article encodedWikipediaTerm={encodedWikipediaTerm} wikipediaArticle={wikipediaArticle} dictionary={dictionary} />
+                <Article wikipediaTerm={wikipediaTerm} wikipediaArticle={wikipediaArticle} dictionary={dictionary} />
                 <section className="mt-8">
                     <h4 className="text-xl font-medium mb-4 bg-zinc-100 text-gray-950 p-1 rounded">Notas</h4>
                     <Textarea 

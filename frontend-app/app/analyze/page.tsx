@@ -13,7 +13,7 @@ type tupleDictionary = [string, number];
 export const Analyze = () => {
     const router = useRouter();
     const searchParams = useSearchParams()
-    const encodedWikipediaTerm = searchParams.get('w');
+    const wikipediaTerm = searchParams.get('w');
     const [wikipediaArticle, setWikipediaArticle] = 
     useState({
         article_summary: NOT_AVAILABLE,
@@ -26,15 +26,15 @@ export const Analyze = () => {
     const [isHydrated, setIsHydrated] = useState(false);
     const [theTermIsAnArticle, setTheTermIsAnArticle] = useState(false);
 
-    const decodeWikipediaTerm = (encodedWikipediaTerm: string) => {
-        let wikipedia_name = decodeURIComponent(encodedWikipediaTerm);
-        wikipedia_name = wikipedia_name.replaceAll("_"," ");
-        return wikipedia_name;
+    const decodeWikipediaTerm = (wikipediaTerm: string) => {
+        let wikipediaName = decodeURIComponent(wikipediaTerm);
+        wikipediaName = wikipediaName.replaceAll("_"," ");
+        return wikipediaName;
     }
 
-    const wikipedia_name = 
-    typeof encodedWikipediaTerm == "string" ? 
-    decodeWikipediaTerm(encodedWikipediaTerm) : "";
+    const wikipediaName = 
+    typeof wikipediaTerm == "string" ? 
+    decodeWikipediaTerm(wikipediaTerm) : "";
 
     const saveArticle = () => {
         axios
@@ -60,12 +60,12 @@ export const Analyze = () => {
         if(!isHydrated) return;
 
         const petitionToFetchArticle = axios
-        .get(process.env.NEXT_PUBLIC_SERVER_URL+`articles/analyze/${encodedWikipediaTerm}`)
+        .get(process.env.NEXT_PUBLIC_SERVER_URL+`articles/analyze/${wikipediaName}`)
         .then((response) => {
             setTheTermIsAnArticle(true);
             setWikipediaArticle({
                 ...response.data,
-                article_name: wikipedia_name
+                article_name: wikipediaName
             })
         })
         .catch((error) => {
@@ -88,11 +88,13 @@ export const Analyze = () => {
         setDictionary(dictionarySorted);
     }, [wikipediaArticle]);
 
+    if(!isHydrated) return null;
+
     return (
-        <main className="lg:max-w-8/10 lg:pr-0 lg:pl-0 pt-15 m-auto pr-5 pl-5">
+        <main className="lg:max-w-8/10 lg:pr-0 lg:pl-0 pt-15 m-auto pr-5 pl-5 pb-10">
             <section>
                 <div className="mb-3">
-                    <h1 className="text-3xl font-bold mb-5 lg:inline bg-zinc-100 text-gray-950 p-1 rounded">{wikipedia_name}</h1>
+                    <h1 className="text-3xl font-bold mb-5 lg:inline bg-zinc-100 text-gray-950 p-1 rounded">{wikipediaName}</h1>
                     <Button asChild className="mb-2 mr-3 lg:mr-0 lg:inline lg:float-right">
                         <Link href="/">Volver al buscador</Link>
                     </Button>
@@ -101,7 +103,7 @@ export const Analyze = () => {
                     </Button>
                 </div>
             </section>
-            <Article encodedWikipediaTerm={encodedWikipediaTerm} wikipediaArticle={wikipediaArticle} dictionary={dictionary} />
+            <Article wikipediaTerm={wikipediaTerm} wikipediaArticle={wikipediaArticle} dictionary={dictionary} />
         </main>
     )
 }
