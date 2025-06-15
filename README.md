@@ -9,7 +9,7 @@ Cumple con todos los requerimientos **obligatorios** y **opcionales** especifica
 
 Requisitos preliminares: 
 
-- Debes tener NodeJS 19 o superior
+- Debes tener NodeJS 21.1.0 o superior
 - Debes tener Python 3.10 o superior
 - Debes tener PostgreSQL 16 o superior
 
@@ -113,6 +113,8 @@ Decidí utilizar una arquitectura limpia basada en capas dado que identifiqué q
 - Servicios: La lógica de negocio está presente aquí. La información se procesa en esta capa.
 - Modelos: La capa que hace interacciones con la BD. Esta se encarga de almacenar los modelos de la data, y realizar operaciones con la BD.
 - Tambien tenemos un middleware que maneja los routers de la API.
+- Para NLP se usa el modelo ``es_core_news_md `` dado su rendimiento sin perder significativa precisión. En entornos de producción, usaria probablemente `` es_core_news_lg `` o el modelo transformer para mejorar la precisión 
+especialmente con la detección de entidades.
 - El proyecto tambien posee pruebas unitarias para operaciones comunes en la API. Si deseas ejecutarlas, solo debes ejecutar en el directorio de ``backend-api/tests/unit`` este comando.
 
 ```
