@@ -105,7 +105,7 @@ export const ArticleList = ({articles, totalArticles}: ArticleProps) => {
             onClick={() => { router.push("/article?id="+article.id) }}>
             <div>
                 <h4 className="inline font-medium">{article.article_name}</h4>
-                <small className="inline float-right">{makeDateMoreReadable(article.creation_date)}</small>
+                <small className="inline float-right" suppressHydrationWarning>{makeDateMoreReadable(article.creation_date)}</small>
             </div>
             <p>{makeDescriptionAShortOne(article.article_summary)}</p>
         </li>

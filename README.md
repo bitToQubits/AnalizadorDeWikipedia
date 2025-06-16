@@ -115,10 +115,13 @@ Decidí utilizar una arquitectura limpia basada en capas dado que identifiqué q
 - Tambien tenemos un middleware que maneja los routers de la API.
 - Para NLP se usa el modelo ``es_core_news_md `` dado su rendimiento sin perder significativa precisión. En entornos de producción, usaria probablemente `` es_core_news_lg `` o el modelo transformer para mejorar la precisión 
 especialmente con la detección de entidades.
+
+#### Pruebas unitarias
+
 - El proyecto tambien posee pruebas unitarias para operaciones comunes en la API. Si deseas ejecutarlas, solo debes ejecutar en el directorio de ``backend-api/tests/unit`` este comando.
 
 ```
-    pytest articles_unit_tests.py
+pytest articles_unit_tests.py
 ```
 
 ### Modelo de datos
@@ -189,13 +192,13 @@ Nota: los (...) indican que puede haber más de un elemento en esa colección
 
 Te permite buscar un termino en Wikipedia
 
-Cuerpo de petición
+Parámetros de ruta
 
 ```
 search_term (requerido) -> string [término de busqueda]
 ```
 
-Cuerpo de respuesta
+`` JSON ``  Cuerpo de respuesta
 
 ```
 [
@@ -213,7 +216,7 @@ Cuerpo de respuesta
 
 Realiza una peticion a la API de wikipedia, realiza NLP sobre el contenido y devuelve una respuesta procesada.
 
-`` JSON `` Cuerpo de petición
+Parámetros de ruta
 
 ```
 wikipedia_identificator (requerido) -> string [nombre del artículo al cual realizar el analisis]
@@ -293,7 +296,7 @@ Guarda un artículo.
 
 Elimina un artículo
 
-`` JSON `` Cuerpo de la petición
+Parámetros de ruta
 
 ```
 article_id (requerido) -> number [id del artículo el cual eliminar]
@@ -313,7 +316,7 @@ article_id (requerido) -> number [id del artículo el cual eliminar]
 
 Obtén una lista de acuerdo a una posición de inicio (offset)
 
-`` JSON `` Cuerpo de la petición
+Parámetros de ruta
 
 ```
 offset (requerido) -> number [a partir de que elemento listar resultados]
@@ -342,7 +345,7 @@ offset (requerido) -> number [a partir de que elemento listar resultados]
 
 Obtén un artículo por id
 
-`` JSON `` Cuerpo de la petición
+Parámetros de ruta
 
 ```
 article_id (requerido) -> number [el id del artículo a obtener]
@@ -384,11 +387,13 @@ article_id (requerido) -> number [el id del artículo a obtener]
 
 Actualiza el artículo. Solo la nota del artículo puede ser actualizada según requerimientos del proyecto.
 
-`` JSON `` Cuerpo de la petición
+Parámetros de ruta
 
 ```
 article_id (requerido) -> number [el id del artículo a actualizar]
 ```
+
+`` JSON `` Cuerpo de la petición
 
 ```
 {

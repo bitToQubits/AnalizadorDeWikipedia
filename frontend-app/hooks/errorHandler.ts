@@ -4,7 +4,7 @@ export const errorHandler = (error: any) => {
     if(error?.response?.data?.message){
         errorMessage = error.response.data.message;
     } else {
-        if(error.response.data?.detail){
+        if(error?.response?.data?.detail){
             if(error.response.data.detail[0]){
                 errorMessage = error.response.data.detail[0].msg;
             }
