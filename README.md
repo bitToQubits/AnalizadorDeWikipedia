@@ -66,7 +66,7 @@ POSTGRES_SERVER=[hostname / address]
 POSTGRES_PORT=[port]
 POSTGRES_DB=[db_name]
 ```
-Los rellenas con tus datos de PostgreSQL. Crea un DB para el proyecto y el nombre lo asignas en ``[db_name]``, el backend se creara de crear lo demas
+Los rellenas con tus datos de PostgreSQL. Crea un DB para el proyecto y el nombre lo asignas en ``[db_name]``, el backend se encargará de crear lo demas
 
 Ya casi terminamos con el backend! Ejecuta este comando para inicializarlo.
 
@@ -181,7 +181,7 @@ integridad de los datos y consultas rápidas.
 
 #### NextJS
 
-Utilice el patrón por defecto que usa NextJS basado en páginas y componentes. Implementé logica de manejo de estado (carga, error, exito) en cada una de las peticiones. Tambien aproveché el SSR que ofrece NextJS para acelarar los tiempos de carga iniciales. Modularizé y abstraí funciones y módulos para aplicar los principios DRY.
+Utilice el patrón por defecto que usa NextJS basado en páginas y componentes. Implementé logica de manejo de estado (carga, error, exito) en cada una de las peticiones. Tambien aproveché el SSR que ofrece NextJS para acelerar los tiempos de carga iniciales. Modularizé y abstraí funciones y módulos para aplicar los principios DRY.
 ## Endpoints de la API
 
 Nota: los (...) indican que puede haber más de un elemento en esa colección
