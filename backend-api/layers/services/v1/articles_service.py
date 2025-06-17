@@ -62,11 +62,9 @@ class ArticlesService:
 
         if len(dictionary_of_words) >= settings.MAXIMUM_WORDS_TO_DO_NLP:
             dictionary_of_words = dict(list(dictionary_of_words.items())[:settings.MAXIMUM_WORDS_TO_DO_NLP])
-
-        string_most_common_words = " ".join(list(dictionary_of_words))
         
         # Reconocimiento de entidades
-        text_processed_for_entities = settings.model_for_recognizing_language(string_most_common_words)
+        text_processed_for_entities = settings.model_for_recognizing_language(article_page.content)
 
         for index, entity in enumerate(text_processed_for_entities.ents):
             if index == settings.MAXIMUM_WORDS_TO_DO_NLP:
