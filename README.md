@@ -153,7 +153,6 @@ Modelo que representa el diccionario de palabras de un artículo. Máximo seran 
 **Modelo de entidades**
 
 Modelo que representa las entidades detectadas en un artículo. 
-Calculadas a partir de las 100 entradas del diccionario.
 
 | Campo      | Descripción |
 |------------|-------------|
@@ -167,7 +166,6 @@ Calculadas a partir de las 100 entradas del diccionario.
 **Modelo de tipo de palabras**
 
 Modelo que representa el tipo gramatical de palabras dentro de un artículo. 
-Calculadas a partir de las 100 entradas del diccionario.
 
 | Campo      | Descripción |
 |------------|-------------|
